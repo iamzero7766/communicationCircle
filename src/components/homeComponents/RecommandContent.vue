@@ -11,10 +11,20 @@
               ')'
           "
         ></div>
-        <div class="image-article-style">{{ item.content }}</div>
+        <div class="image-article-style">
+          <span>{{ item.authorName }} : {{ item.content }}</span>
+          <el-button type="text" class="cursor-pointer">
+            阅读全文
+            <i class="el-icon-arrow-down"></i>
+          </el-button>
+        </div>
       </div>
       <div v-if="item.image == null || item.image == ''" class="article-style">
-        {{ item.content }}
+        <span>{{ item.authorName }} : {{ item.content }}</span>
+        <el-button type="text" class="cursor-pointer">
+          阅读全文
+          <i class="el-icon-arrow-down"></i>
+        </el-button>
       </div>
       <div class="comment-box">
         <el-button class="comment-button">
@@ -22,22 +32,37 @@
           赞同
           {{ item.agreeNum }}
         </el-button>
-        <el-button class="comment-button" style="width: 40px">
+        <el-button class="comment-button padding-button" style="width: 40px">
           <i class="el-icon-caret-bottom"></i>
         </el-button>
-        <span>
-          <img src="../../assets/content/comment.png" class="img-style" />
+        <div class="image-text-comment">
+          <span class="img-flex">
+            <img src="../../assets/content/comment.png" class="img-style" />
+          </span>
           {{ item.commentNum }}
           条评论
-        </span>
-        <el-button>
-          <img src="../../assets/content/like.png" />
-          喜欢
-        </el-button>
-        <el-button>
-          <img src="../../assets/content/collection.png" />
+        </div>
+        <div class="image-text-comment">
+          <span class="img-flex">
+            <img src="../../assets/content/collection.png" class="img-style" />
+          </span>
           收藏
-        </el-button>
+        </div>
+        <div class="image-text-comment">
+          <span class="img-flex">
+            <img src="../../assets/content/like.png" class="img-style" />
+          </span>
+          {{ item.isLike ? "取消喜欢" : "喜欢" }}
+        </div>
+        <el-dropdown trigger="click" style="margin-left: 40px">
+          <span class="el-dropdown-link"
+            ><i class="el-icon-more el-icon--right"></i
+          ></span>
+          <el-dropdown-menu slot="dropdown">
+            <el-dropdown-item>举报</el-dropdown-item>
+            <el-dropdown-item>不感兴趣</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
       </div>
     </div>
   </div>
@@ -67,6 +92,10 @@ export default {
 .recommand-content-style {
   width: 100%;
   background-color: #fff;
+  .cursor-pointer {
+    cursor: pointer;
+    padding: 0;
+  }
   .content-box {
     width: 100%;
     padding: 15px;
@@ -76,12 +105,11 @@ export default {
   .image-box {
     width: 100%;
     margin-top: 10px;
-    height: 120px;
+    height: 110px;
   }
   .image-style {
     width: 190px;
     height: 105px;
-    margin-top: 5px;
     border-radius: 3px;
     background-position: center;
     background-repeat: no-repeat;
@@ -92,9 +120,10 @@ export default {
   .image-article-style {
     width: 450px;
     margin-left: 10px;
+    font-size: 15px;
     float: left;
-    height: 120px;
-    line-height: 30px;
+    height: 100px;
+    line-height: 25px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -103,8 +132,9 @@ export default {
   }
   .article-style {
     width: 100%;
-    height: 60px;
-    line-height: 30px;
+    font-size: 15px;
+    height: 50px;
+    line-height: 25px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -123,9 +153,30 @@ export default {
     background: rgba(0, 132, 255, 0.1);
     border: 0;
   }
+  .padding-button {
+    padding-left: 0;
+    padding-right: 0;
+    text-align: center;
+  }
   .img-style {
     width: 20px;
     height: 20px;
+  }
+  .image-text-comment {
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    margin-left: 40px;
+    cursor: pointer;
+    color: #8590a6;
+  }
+  .img-flex {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 5px;
+  }
+  .el-dropdown-link {
+    cursor: pointer;
   }
 }
 </style>

@@ -15,7 +15,7 @@
     <el-input :placeholder="placeholder" class="input-style">
       <el-button slot="append" icon="el-icon-search"></el-button>
     </el-input>
-    <el-button class="button-style">提问</el-button>
+    <el-button class="button-style" @click="askClick">提问</el-button>
     <el-badge :value="messageNum" :max="99" class="item">
       <el-button class="message-button message-icon"></el-button>
     </el-badge>
@@ -29,13 +29,23 @@
         fit="contain"
       ></el-avatar>
     </div>
+
+    <!-- <el-dialog :visible.sync="visibleDialog" title="MYQUESTION">
+      <div id="editor"></div>
+    </el-dialog> -->
+    <editor-set
+      :visible.sync="visibleDialog"
+      @modalClose="modalClick"
+    ></editor-set>
   </div>
 </template>
 
 <script>
+import E from "wangeditor";
+import EditorSet from "./editor/EditorSet.vue";
 export default {
+  components: { EditorSet },
   name: "AppHeader",
-  components: {},
   data() {
     return {
       appName: "CENTER",
@@ -43,15 +53,35 @@ export default {
       placeholder: "hhhhhhh",
       messageNum: 22,
       infoNum: 10,
-      avatorUrl: "../assets/avator.jpg"
+      avatorUrl: "../assets/avator.jpg",
+      visibleDialog: false,
+      editor: null,
+      title: "",
+      showCreateTaskModal: false, // 新增任务弹出框显示标识：默认不显示
+      createTaskloading: false
     };
   },
   computed: {},
-  created() {},
+  created() {
+    // this.initEditor();
+  },
   mounted() {},
   methods: {
     handleSelect(key) {
       console.log(key);
+    },
+
+    askClick() {
+      this.visibleDialog = true;
+    },
+
+    initEditor() {
+      this.editor = new E("#editor");
+      this.editor.create();
+    },
+
+    modalClick(value) {
+      this.visibleDialog = value;
     }
   }
 };
@@ -120,6 +150,14 @@ export default {
   }
   .avator-style {
     margin-left: 50px;
+  }
+  .question-dialog-class {
+    .el-dialog {
+      width: 600px;
+    }
+    .editor-class {
+      min-height: 300px;
+    }
   }
 }
 </style>

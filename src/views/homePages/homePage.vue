@@ -17,14 +17,17 @@
         <recommand-content v-show="activeIndex == '1'"></recommand-content>
       </div>
     </div>
-    <div class="info-view">121212</div>
+    <div class="info-view">
+      <personal-component></personal-component>
+    </div>
   </div>
 </template>
 
 <script>
+import PersonalComponent from "../../components/homeComponents/PersonalComponent.vue";
 import RecommandContent from "../../components/homeComponents/RecommandContent.vue";
 export default {
-  components: { RecommandContent },
+  components: { RecommandContent, PersonalComponent },
   name: "homePage",
   data() {
     return {
@@ -73,7 +76,7 @@ export default {
     }
   }
   .info-view {
-    width: 280px;
+    width: 295px;
     float: left;
     margin-left: 10px;
     background-color: #fff;
