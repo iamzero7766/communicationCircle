@@ -38,7 +38,7 @@ export default {
   methods: {
     handleSelect(key) {
       console.log(key);
-      this.activeIndex == key;
+      this.activeIndex = key;
     }
   },
   created() {}

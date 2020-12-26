@@ -1,6 +1,6 @@
 <template>
   <div class="app-header-style">
-    <div class="app-header-title">{{ appName }}</div>
+    <div class="app-header-title" @click="routerHome">{{ appName }}</div>
     <el-menu
       :default-active="activeIndex"
       class="el-menu-demo"
@@ -29,10 +29,6 @@
         fit="contain"
       ></el-avatar>
     </div>
-
-    <!-- <el-dialog :visible.sync="visibleDialog" title="MYQUESTION">
-      <div id="editor"></div>
-    </el-dialog> -->
     <editor-set
       :visible.sync="visibleDialog"
       @modalClose="modalClick"
@@ -82,6 +78,12 @@ export default {
 
     modalClick(value) {
       this.visibleDialog = value;
+    },
+
+    routerHome() {
+      this.$router.push({
+        path: "/"
+      });
     }
   }
 };
@@ -104,6 +106,7 @@ export default {
     color: aquamarine;
     margin-left: 20%;
     float: left;
+    cursor: pointer;
   }
   .el-menu-demo {
     float: left;

@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import homePage from "../views/homePages/homePage";
 import diary from "../views/homePages/diary.vue";
+import addToday from "../views/homePages/addToday";
 
 Vue.use(VueRouter);
 
@@ -15,6 +16,11 @@ const routes = [
     path: "/diary",
     name: "diary",
     component: diary
+  },
+  {
+    path: "/addToday",
+    name: "addToday",
+    component: addToday
   }
 ];
 
