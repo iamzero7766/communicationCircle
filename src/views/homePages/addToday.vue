@@ -7,6 +7,10 @@
     <div class="content-box">
       <editor-component v-model="detail" :isClear="isClear" @change="change" :menu="menuList"></editor-component>
     </div>
+    <div class="bottom-class">
+      <el-button @click="cancel">取消</el-button>
+      <el-button type="primary">确定添加</el-button>
+    </div>
   </div>
 </template>
 
@@ -40,6 +44,11 @@ export default {
     },
     change(val) {
       console.log(val);
+    },
+    cancel() {
+      this.$router.push({
+        path: "/diary"
+      });
     }
   },
   created() {
@@ -76,6 +85,11 @@ export default {
     min-height: 600px;
     box-sizing: border-box;
     padding: 20px;
+  }
+  .bottom-class {
+    width: 100%;
+    height: 50px;
+    text-align: center;
   }
 }
 </style>

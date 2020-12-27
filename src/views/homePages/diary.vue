@@ -9,27 +9,27 @@
       </div>
       <div class="content-box">
         <div
-                v-for="item in dataList"
-                :key="item.day"
-                :class="[item.day > 0 ? 'cursor-pointer' : '', 'content-box-style']"
-                @click="showInfo(item)"
+          v-for="item in dataList"
+          :key="item.day"
+          :class="[item.day > 0 ? 'cursor-pointer' : '', 'content-box-style']"
+          @click="showInfo(item)"
         >
           <div v-show="item.day > 0" class="txt-style">{{ item.day }}</div>
           <div v-show="item.day > 0">
             <img
-                    v-if="item.value >= 80"
-                    src="../../assets/personal/high.png"
-                    class="value-image-style"
+              v-if="item.value >= 80"
+              src="../../assets/personal/high.png"
+              class="value-image-style"
             />
             <img
-                    v-if="item.value < 80 && item.value >= 50"
-                    src="../../assets/personal/normal.png"
-                    class="value-image-style"
+              v-if="item.value < 80 && item.value >= 50"
+              src="../../assets/personal/normal.png"
+              class="value-image-style"
             />
             <img
-                    v-if="item.value < 50"
-                    src="../../assets/personal/down.png"
-                    class="value-image-style"
+              v-if="item.value < 50"
+              src="../../assets/personal/down.png"
+              class="value-image-style"
             />
           </div>
         </div>
@@ -45,6 +45,9 @@
         <el-button class="button-class" @click="addToday">今日</el-button>
       </div>
     </div>
+    <el-dialog :visible.sync="dialogVisible">
+      <div v-html="htmlContent"></div>
+    </el-dialog>
   </div>
 </template>
 
@@ -64,7 +67,9 @@ export default {
         { name: "五", key: 6, value: "FRI" },
         { name: "六", key: 7, value: "SAT" }
       ],
-      dataList: []
+      dataList: [],
+      dialogVisible: false,
+      htmlContent: ""
     };
   },
   created() {
@@ -115,6 +120,8 @@ export default {
     // 获取当天日记
     showInfo(item) {
       console.log(item);
+      this.dialogVisible = true;
+      this.htmlContent = "<p>12</p><p><font size=\"3\">我们在现在在一起回事在那样</font><br></p><p>dddd<font face=\"Courier New\">撒网嚷嚷swwww</font><font size=\"3\"><br></font></p>"
     },
 
     addToday() {

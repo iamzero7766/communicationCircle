@@ -45,7 +45,7 @@ export default {
       if (value !== this.editor.txt.html()) {
         this.editor.txt.html(this.value);
       }
-    },
+    }
     //value为编辑框输入的内容，这里我监听了一下值，当父组件调用得时候，如果给value赋值了，子组件将会显示父组件赋给的值
   },
   mounted() {
@@ -94,10 +94,10 @@ export default {
       //     // }
       //   }
       // };
-      // this.editor.customConfig.onchange = html => {
-      //   this.info_ = html; // 绑定当前逐渐地值
-      //   this.$emit("change", this.info_); // 将内容同步到父组件中
-      // };
+      this.editor.config.onchange = html => {
+        this.info_ = html; // 绑定当前逐渐地值
+        this.$emit("change", this.info_); // 将内容同步到父组件中
+      };
 
 
       console.log(this.menu)
