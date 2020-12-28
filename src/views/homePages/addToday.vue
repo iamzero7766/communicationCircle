@@ -2,7 +2,10 @@
   <div class="add-today-class">
     <div class="top-title">
       <div class="date-class">{{ nowDate }}</div>
-      <div class="weather-class">{{ weather }}</div>
+      <div class="weather-class">
+          {{ weather }}
+          <span style="margin-left: 10px"> {{ temp }}</span>
+      </div>
     </div>
     <div class="content-box">
       <editor-component v-model="detail" :isClear="isClear" @change="change" :menu="menuList"></editor-component>
@@ -17,13 +20,15 @@
 <script>
 import Editor from "wangeditor";
 import EditorComponent from "../../components/editor/EditorComponent";
+import AMap from "vue-amap";
 export default {
   name: "addToday",
   components: { EditorComponent },
   data() {
     return {
       nowDate: "",
-      weather: "阴天",
+      weather: "",
+      temp: "",
       editor: null,
       isClear: false,
       detail: "",
@@ -49,11 +54,36 @@ export default {
       this.$router.push({
         path: "/diary"
       });
+    },
+    refreshWeather() {
+      this.$jq.ajax({
+        url: "http://wthrcdn.etouch.cn/weather_mini",
+        type: "get",
+        data: {
+          city: "上海"
+        },
+        success: (res) => {
+          console.log(res);
+          var result = res.data.forecast[0];
+          this.weather = result.type;
+          this.temp = result.low.substring(3) + "~" + result.high.substring(3);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    },
+
+
+    getLocation() {
+      AMap.plugin('')
     }
+
+
   },
   created() {
     this.nowDate = this.getDate();
-    // this.initEditor();
+    this.refreshWeather();
   }
 };
 </script>
