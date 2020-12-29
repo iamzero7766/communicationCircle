@@ -57,6 +57,7 @@ export default {
       // http://192.168.2.125:8080/admin/storage/create
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
       this.editor.config.uploadImgShowBase64 = true;
+      this.editor.config.showLinkImg = false;
       // this.editor.customConfig.uploadImgShowBase64 = false; // base 64 存储图片
       // this.editor.customConfig.uploadImgServer =
       //   "http://otp.cdinfotech.top/file/upload_images"; // 配置服务器端地址

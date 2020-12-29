@@ -1,14 +1,26 @@
 import Vue from "vue";
+import store from "../store/index.js";
 import VueRouter from "vue-router";
 import homePage from "../views/homePages/homePage";
 import diary from "../views/homePages/diary.vue";
 import addToday from "../views/homePages/addToday";
+import loginPage from "../views/loginPage";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/login",
+    name: "loginPage",
+    component: loginPage
+  },
+  {
     path: "/",
+    name: "loginPage",
+    component: loginPage
+  },
+  {
+    path: "/homePage",
     name: "homePage",
     component: homePage
   },
@@ -26,6 +38,20 @@ const routes = [
 
 const router = new VueRouter({
   routes
+});
+
+
+router.beforeEach((to, from, next) => {
+  if(to.path === "/login") {
+    next()
+  } else {
+    if(store.state.loginData.isLogin) {
+      next()
+    } else {
+      next( {name: "loginPage"} )
+    }
+  }
+  next();
 });
 //获取原型对象上的push函数
 const originalPush = VueRouter.prototype.push;
