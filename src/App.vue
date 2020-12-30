@@ -9,14 +9,27 @@
 
 <script>
 import AppHeader from "./components/AppHeader";
+// import store from "./store/index.js";
 export default {
   components: {
     AppHeader
   },
 
-  data() {
-    return {
-      isLogin: false,
+  // data() {
+  //   return {
+  //     isLogin: this.$store.state.loginData.isLogin,
+  //   }
+  // },
+
+  computed: {
+    isLogin() {
+      return this.$store.state.loginData.isLogin
+    }
+  },
+
+  watch: {
+    store(loginInfo) {
+      console.log(loginInfo);
     }
   },
 

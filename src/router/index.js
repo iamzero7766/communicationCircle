@@ -43,6 +43,12 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if(to.path === "/login") {
+    var loginData = {
+      isLogin: false,
+      userId: "",
+      userName: "",
+    };
+    store.commit('setLoginData', loginData);
     next()
   } else {
     if(store.state.loginData.isLogin) {

@@ -7,12 +7,16 @@
           <span style="margin-left: 10px"> {{ temp }}</span>
       </div>
     </div>
+    <div class="block">
+      <span class="demonstration">心情值</span>
+      <el-slider v-model="happyNumber"></el-slider>
+    </div>
     <div class="content-box">
       <editor-component v-model="detail" :isClear="isClear" @change="change" :menu="menuList"></editor-component>
     </div>
     <div class="bottom-class">
       <el-button @click="cancel">取消</el-button>
-      <el-button type="primary">确定添加</el-button>
+      <el-button type="primary" @click="submit">确定发布</el-button>
     </div>
   </div>
 </template>
@@ -20,7 +24,7 @@
 <script>
 import Editor from "wangeditor";
 import EditorComponent from "../../components/editor/EditorComponent";
-import AMap from "vue-amap";
+// import AMap from "vue-amap";
 export default {
   name: "addToday",
   components: { EditorComponent },
@@ -32,15 +36,20 @@ export default {
       editor: null,
       isClear: false,
       detail: "",
-      menuList: ["fontSize", "fontName", "emoticon", "image", ""]
+      menuList: ["fontSize", "fontName", "emoticon", "image", ""],
+      hasToday: false,
+      dt_create: "",
+      happyNumber: 50,
     };
   },
   methods: {
     getDate() {
       var year = new Date().getFullYear();
       var month = new Date().getMonth() + 1;
+      month = month < 10 ? "0" + month : month;
       var day = new Date().getDate();
-      var now = year + " 年 " + month + " 月 " + day + " 日 ";
+      day = day < 10 ? "0" + day : day;
+      var now = year + "-" + month + "-" + day;
       return now;
     },
     initEditor() {
@@ -75,15 +84,118 @@ export default {
     },
 
 
-    getLocation() {
-      AMap.plugin('')
-    }
+    getInfoToday() {
+
+      var url = "http://localhost:3000/diary/queryToday";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          user_id: this.$store.state.loginData.userId,
+          dt_create: this.dt_create
+        }),
+        success: (res) => {
+          console.log(res);
+          if(res.info.length > 0) {
+            this.hasToday = true;
+            this.detail = res.info[0].content;
+          } else {
+            this.hasToday = false;
+          }
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+
+    },
+
+    submit() {
+      if(this.hasToday) {
+        this.updateToday();
+      } else {
+        this.addToday();
+      }
+    },
+
+    addToday() {
+      if(this.detail == "") {
+        this.$message({
+          message: "请填写内容",
+          type: "warnning"
+        });
+        return;
+      }
+      var url = "http://localhost:3000/diary/addDiary";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          user_id: this.$store.state.loginData.userId,
+          temp: this.temp,
+          dt_create: this.dt_create,
+          type: this.weather,
+          content: this.detail,
+        }),
+        success: (res) => {
+          console.log(res);
+          if(res.status == 1) {
+            this.$message({
+              message: "添加成功！",
+              type: "success",
+            });
+          }
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    },
+
+    updateToday() {
+      if(this.detail == "") {
+        this.$message({
+          message: "请填写内容",
+          type: "warnning"
+        });
+        return;
+      }
+      var url = "http://localhost:3000/diary/updateDiary";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          user_id: this.$store.state.loginData.userId,
+          dt_create: this.dt_create,
+          content: this.detail,
+        }),
+        success: (res) => {
+          console.log(res);
+          if(res.status == 1) {
+            this.$message({
+              message: "添加成功！",
+              type: "success",
+            });
+          }
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    },
+
+
 
 
   },
   created() {
     this.nowDate = this.getDate();
+    this.dt_create = new Date(this.nowDate).getTime() / 1000;
     this.refreshWeather();
+    this.getInfoToday();
   }
 };
 </script>

@@ -117,6 +117,10 @@ export default {
       return curDate.getDate();
     },
 
+
+    // 获取当月日记内容
+    getDiaryContent() {},
+
     // 获取当天日记
     showInfo(item) {
       console.log(item);
@@ -125,7 +129,6 @@ export default {
     },
 
     addToday() {
-      console.log("1212");
       this.$router.push({
         path: "addToday"
       });
