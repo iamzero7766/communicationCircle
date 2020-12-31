@@ -54,6 +54,7 @@ export default {
     border: 1px solid #ddd;
     float: left;
     background-color: #fff;
+    box-shadow: 0 0 5px #ddd;
     .top-title {
       width: 100%;
       height: 60px;
@@ -80,6 +81,7 @@ export default {
     float: left;
     margin-left: 10px;
     background-color: #fff;
+    box-shadow: 0 0 5px #ddd;
   }
 }
 </style>

@@ -15,7 +15,7 @@
           @click="showInfo(item)"
         >
           <div v-show="item.day > 0" class="txt-style">{{ item.day }}</div>
-          <div v-show="item.day > 0">
+          <div v-show="item.day > 0 && item.isShow">
             <img
               v-if="item.value >= 80"
               src="../../assets/personal/high.png"
@@ -39,14 +39,19 @@
       <el-date-picker v-model="month" type="month" style="width: 100%">
       </el-date-picker>
       <div class="date-picker">
-        <el-button class="button-class">查询</el-button>
+        <el-button class="button-class" @click="searchDate">查询</el-button>
       </div>
       <div class="date-picker">
         <el-button class="button-class" @click="addToday">今日</el-button>
       </div>
     </div>
-    <el-dialog :visible.sync="dialogVisible">
-      <div v-html="htmlContent"></div>
+    <el-dialog :visible.sync="dialogVisible" class="dialog-class" :title="todayTitle">
+      <div class="dialog-top-box">
+        <div class="dialog-one-part">天气： {{ todayType }}</div>
+        <div class="dialog-one-part">温度： {{ todayTemp }}</div>
+        <div class="dialog-one-part">心情： {{ todayValue }}</div>
+      </div>
+      <div v-html="htmlContent" class="content-dialog"></div>
     </el-dialog>
   </div>
 </template>
@@ -69,26 +74,47 @@ export default {
       ],
       dataList: [],
       dialogVisible: false,
-      htmlContent: ""
+      htmlContent: "",
+      todayTitle: "",
+      todayType: "",
+      todayTemp: "",
+      todayValue: "",
     };
   },
   created() {
-    this.getMonthDate();
+    this.month = new Date();
+    this.getMonthDate(this.month);
   },
   methods: {
-    getMonthDate() {
-      this.month = new Date();
-      var month = new Date().getMonth() + 1; // 月
+
+    // 获取当月最后一天或第一天 的 时间戳
+    getDay(date) {
+      var newDate = new Date(date);
+      var firstDay = new Date(newDate.getFullYear(), date.getMonth(), 1);
+      var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+      return [firstDay, lastDay]
+    },
+
+
+    searchDate() {
+      console.log(this.month);
+      this.getMonthDate(this.month);
+    },
+
+    getMonthDate(dateValue) {
+      var month = new Date(dateValue).getMonth() + 1; // 月
+      var year = new Date(dateValue).getFullYear();
       // 这个月的第一天是星期几
-      var firstDay = new Date().setDate(1);
+      var firstDay = new Date(dateValue).setDate(1);
       var firstWeek = new Date(firstDay).getDay();
-      var monthDays = this.getDayNumber(new Date()); // 这个月有多少天
+      var monthDays = this.getDayNumber(dateValue); // 这个月有多少天
       var data = {};
       var dataList = [];
       console.log(monthDays);
       if (firstWeek > 0) {
         for (let i = 0; i < firstWeek; i++) {
           data = {
+            year: year,
             month: month,
             day: 0
           };
@@ -97,15 +123,20 @@ export default {
       }
       for (let m = 0; m < monthDays; m++) {
         data = {
+          year: year,
           month: month,
           day: m + 1,
+          isShow: false,
           value: 50,
-          info: ""
+          detail: "",
+          type: "",
+          temp: ""
         };
         dataList.push(data);
       }
       this.dataList = dataList;
-      console.log(this.dataList);
+      var date = this.getDay(new Date());
+      this.getDiaryContent(date[0], date[1]);
     },
 
     // 获取当月的天数
@@ -119,13 +150,51 @@ export default {
 
 
     // 获取当月日记内容
-    getDiaryContent() {},
+    getDiaryContent(start, end) {
+      var url = "http://localhost:3000/diary/queryMonth";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: 'application/json',
+        data: JSON.stringify({
+          user_id: this.$store.state.loginData.userId,
+          dt_start: start.getTime() / 1000,
+          dt_end: end.getTime() / 1000,
+        }),
+        success: (res) => {
+          console.log(res);
+          if(res.info.length === 0) return;
+          res.info.forEach(item => {
+            var month = new Date(item.dt_create * 1000).getMonth() + 1;
+            var day = new Date(item.dt_create * 1000).getDate();
+            var year = new Date(item.dt_create * 1000).getFullYear();
+            var hasContent = this.dataList.find(x => x.month===month && x.day === day && x.year === year);
+            if(hasContent) {
+              hasContent.value = item.value;
+              hasContent.temp = item.temp;
+              hasContent.type = item.type;
+              hasContent.detail = item.content;
+              hasContent.isShow = true;
+            }
+          });
+          console.log(this.dataList);
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    },
 
     // 获取当天日记
     showInfo(item) {
       console.log(item);
+      if(!item.isShow) return;
       this.dialogVisible = true;
-      this.htmlContent = "<p>12</p><p><font size=\"3\">我们在现在在一起回事在那样</font><br></p><p>dddd<font face=\"Courier New\">撒网嚷嚷swwww</font><font size=\"3\"><br></font></p>"
+      this.htmlContent = item.detail;
+      this.todayTitle = item.year + '-' + item.month + '-' + item.day;
+      this.todayType = item.type;
+      this.todayTemp = item.temp;
+      this.todayValue = item.value;
     },
 
     addToday() {
@@ -215,6 +284,25 @@ export default {
     width: 30px;
     height: 30px;
     margin-top: 10px;
+  }
+  .dialog-class {
+    .el-dialog {
+      width: 700px;
+    }
+    .dialog-top-box {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      border-bottom: 1px dotted #ddd;
+    }
+    .dialog-one-part {
+      flex: 1;
+      text-align: center;
+      line-height: 40px;
+    }
+    .content-dialog {
+      padding: 15px 0;
+    }
   }
 }
 </style>

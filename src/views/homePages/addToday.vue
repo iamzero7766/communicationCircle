@@ -7,9 +7,9 @@
           <span style="margin-left: 10px"> {{ temp }}</span>
       </div>
     </div>
-    <div class="block">
-      <span class="demonstration">心情值</span>
-      <el-slider v-model="happyNumber"></el-slider>
+    <div class="slider-box">
+      <div class="text-style">今日心情值：</div>
+      <el-slider v-model="happyNumber" class="slider-style" show-input></el-slider>
     </div>
     <div class="content-box">
       <editor-component v-model="detail" :isClear="isClear" @change="change" :menu="menuList"></editor-component>
@@ -100,6 +100,7 @@ export default {
           if(res.info.length > 0) {
             this.hasToday = true;
             this.detail = res.info[0].content;
+            this.happyNumber = res.info[0].value;
           } else {
             this.hasToday = false;
           }
@@ -137,6 +138,7 @@ export default {
           temp: this.temp,
           dt_create: this.dt_create,
           type: this.weather,
+          value: this.happyNumber,
           content: this.detail,
         }),
         success: (res) => {
@@ -169,6 +171,7 @@ export default {
         contentType: 'application/json',
         data: JSON.stringify({
           user_id: this.$store.state.loginData.userId,
+          value: this.happyNumber,
           dt_create: this.dt_create,
           content: this.detail,
         }),
@@ -222,11 +225,30 @@ export default {
       margin-right: 20px;
     }
   }
+  .slider-box {
+    width: 100%;
+    height: 60px;
+    box-sizing: border-box;
+    padding: 10px 20px;
+    .text-style {
+      float: left;
+      height: 40px;
+      line-height: 40px;
+    }
+    .slider-style {
+      float: left;
+      width: 500px;
+      margin-left: 20px;
+    }
+    .el-slider__runway {
+      /*background: linear-gradient(to right,#2C2C2C, #1296DB 50%, #D81E06 70%);*/
+    }
+  }
   .content-box {
     width: 100%;
     min-height: 600px;
     box-sizing: border-box;
-    padding: 20px;
+    padding: 10px 20px 20px 20px;
   }
   .bottom-class {
     width: 100%;

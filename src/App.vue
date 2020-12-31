@@ -46,7 +46,7 @@ export default {
   width: 100%;
   height: 100%;
   .router-view {
-    margin-top: 20px;
+    margin-top: 10px;
   }
   .login-router {
     width: 100%;
