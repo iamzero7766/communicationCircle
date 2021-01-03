@@ -5,6 +5,7 @@ import homePage from "../views/homePages/homePage";
 import diary from "../views/homePages/diary.vue";
 import addToday from "../views/homePages/addToday";
 import loginPage from "../views/loginPage";
+import questionInfo from "../views/homePages/questionInfo";
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,11 @@ const routes = [
     path: "/addToday",
     name: "addToday",
     component: addToday
+  },
+  {
+    path: "/questionInfo",
+    name: "questionInfo",
+    component: questionInfo
   }
 ];
 

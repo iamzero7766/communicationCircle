@@ -1,8 +1,8 @@
 <template>
   <div class="recommand-content-style">
     <div v-for="item in contentInfo" :key="item.id" class="content-box">
-      <h3>{{ item.title }}</h3>
-      <div v-if="item.image != null && item.image != ''" class="image-box">
+      <div style="cursor: pointer" @click="showAnswer(item.id)"><h3>{{ item.title }}</h3></div>
+      <div v-if="item.image != null && item.isshow" class="image-box">
         <div
           class="image-style"
           :style="
@@ -19,14 +19,14 @@
           </el-button>
         </div>
       </div>
-      <div v-if="item.image == null || item.image == ''" class="article-style">
+      <div v-if="item.image == null && item.isshow" class="article-style">
         <span>{{ item.authorName }} : {{ item.content }}</span>
         <el-button type="text" class="cursor-pointer">
           阅读全文
           <i class="el-icon-arrow-down"></i>
         </el-button>
       </div>
-      <div class="comment-box">
+      <div class="comment-box" v-show="false">
         <el-button class="comment-button">
           <i class="el-icon-caret-top"></i>
           赞同
@@ -69,22 +69,69 @@
 </template>
 
 <script>
-import contentList from "@/localData/homeContent.js";
+// import contentList from "@/localData/homeContent.js";
 export default {
   name: "RecommandContent",
   components: {},
   data() {
     return {
-      contentInfo: contentList
+      contentInfo: []
     };
   },
   computed: {},
   created() {
     console.log(this.contentInfo);
+    this.getContentInfo(0);
   },
   mounted() {},
   watch: {},
-  methods: {}
+  methods: {
+    getContentInfo(startNum) {
+      var url = "http://localhost:3000/question/query";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        data: JSON.stringify({
+          start: startNum,
+          num: 20
+        }),
+        success: res => {
+          console.log(res);
+          var resultData = [];
+          res.info.forEach(item => {
+            var data = {
+              id: item.question_id,
+              title: item.question_title,
+              image: null,
+              isshow: false,
+              authorName: "",
+              content: ""
+            };
+            if (item.answeInfo.length > 0) {
+              var contentParam = item.answeInfo[0];
+              item.isshow = true;
+              console.log(contentParam);
+            }
+            resultData.push(data);
+          });
+          this.contentInfo = resultData;
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
+    showAnswer(id) {
+      console.log(id);
+      this.$router.push({
+        path: "questionInfo",
+        query: {
+          id: id
+        }
+      });
+    }
+  }
 };
 </script>
 

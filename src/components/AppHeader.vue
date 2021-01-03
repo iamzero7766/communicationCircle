@@ -29,19 +29,41 @@
         fit="contain"
       ></el-avatar>
     </div>
-    <editor-set
+
+    <el-dialog
+      title="MYquestion"
       :visible.sync="visibleDialog"
-      @modalClose="modalClick"
-    ></editor-set>
+      class="dialog-box"
+    >
+      <el-input
+        placeholder="请输入文章标题"
+        maxlength="50"
+        type="textarea"
+        show-word-limit
+        v-model="questionTitle"
+      ></el-input>
+      <editor-component
+        v-model="questionInfo"
+        class="editor-box"
+        :isClear="isClear"
+        :placeValue="placeValue"
+        @change="change"
+        :menu="menuList"
+      ></editor-component>
+      <el-checkbox v-model="checked" style="margin-top: 15px">我要匿名</el-checkbox>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="visibleDialog = false">取 消</el-button>
+        <el-button type="primary" @click="addQuestion">发布</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import E from "wangeditor";
-import EditorSet from "./editor/EditorSet.vue";
+import EditorComponent from "../components/editor/EditorComponent";
 export default {
-  components: { EditorSet },
   name: "AppHeader",
+  components: { EditorComponent },
   data() {
     return {
       appName: "CENTER",
@@ -54,13 +76,17 @@ export default {
       editor: null,
       title: "",
       showCreateTaskModal: false, // 新增任务弹出框显示标识：默认不显示
-      createTaskloading: false
+      createTaskloading: false,
+      isClear: false,
+      menuList: ["fontSize", "fontName", "emoticon", "image", ""],
+      questionTitle: "",
+      questionInfo: "",
+      checked: false,
+      placeValue: "详细描述具体问题"
     };
   },
   computed: {},
-  created() {
-    // this.initEditor();
-  },
+  created() {},
   mounted() {},
   methods: {
     handleSelect(key) {
@@ -70,19 +96,49 @@ export default {
     askClick() {
       this.visibleDialog = true;
     },
-
-    initEditor() {
-      this.editor = new E("#editor");
-      this.editor.create();
-    },
-
-    modalClick(value) {
-      this.visibleDialog = value;
-    },
-
     routerHome() {
       this.$router.push({
         path: "/"
+      });
+    },
+
+    change(val) {
+      console.log(val);
+    },
+
+    addQuestion() {
+      if (this.questionTitle.length === 0) {
+        this.$message({
+          message: "标题请不要为空",
+          type: "warning"
+        });
+        return;
+      }
+      var url = "http://localhost:3000/question/addQuestion";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        data: JSON.stringify({
+          user_id: this.$store.state.loginData.userId,
+          dt_create: new Date().getTime(),
+          title: this.questionTitle,
+          info: this.questionInfo,
+          anonymous: this.checked ? 1 : 0
+        }),
+        success: res => {
+          console.log(res);
+          if (res.status === 1) {
+            this.$message({
+              message: "添加成功！",
+              type: "success"
+            });
+            this.visibleDialog = false;
+          }
+        },
+        error: err => {
+          console.log(err);
+        }
       });
     }
   }
@@ -160,6 +216,11 @@ export default {
     }
     .editor-class {
       min-height: 300px;
+    }
+  }
+  .dialog-box {
+    .editor-box {
+      margin-top: 10px;
     }
   }
 }

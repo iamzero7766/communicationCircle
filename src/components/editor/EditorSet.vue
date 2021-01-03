@@ -2,7 +2,7 @@
   <div class="editor-dialog">
     <el-dialog title="MYquestion" :visible.sync="visible">
       <el-input placeholder="请输入文章标题"></el-input>
-      <div ref="editor1" class="editor-class"></div>
+      <editor-component v-model="detail" :isClear="isClear" @change="change" :menu="menuList"></editor-component>
       <div slot="footer" class="dialog-footer">
         <el-button @click="closeModal">取 消</el-button>
         <el-button type="primary" @click="askTitle">发布</el-button>
@@ -17,6 +17,9 @@ export default {
   name: "EditorSet",
   data() {
     return {
+      detail: "",
+      isClear: false,
+      menuList: ["fontSize", "fontName", "emoticon", "image", ""],
       editor: null,
       func: {
         initEditor: null
@@ -39,6 +42,11 @@ export default {
       this.$nextTick(() => {
         this.initEditor();
       });
+    },
+
+
+    change(val) {
+      console.log(val);
     },
 
     initEditor() {
