@@ -1,134 +1,90 @@
 <template>
-  <div class="recommand-content-style">
+  <div
+    class="recommand-content-style"
+    v-infinite-scroll="loadSet"
+    infinite-scroll-disabled="busy"
+    infinite-scroll-distance="10">
     <div v-for="item in contentInfo" :key="item.id" class="content-box">
-      <div style="cursor: pointer" @click="showAnswer(item.id)"><h3>{{ item.title }}</h3></div>
-      <div v-if="item.image != null && item.isshow" class="image-box">
-        <div
-          class="image-style"
-          :style="
-            'background-image:url(' +
-              require('../../assets/' + item.image + '.jpg') +
-              ')'
-          "
-        ></div>
-        <div class="image-article-style">
-          <span>{{ item.authorName }} : {{ item.content }}</span>
-          <el-button type="text" class="cursor-pointer">
-            阅读全文
-            <i class="el-icon-arrow-down"></i>
-          </el-button>
-        </div>
-      </div>
-      <div v-if="item.image == null && item.isshow" class="article-style">
-        <span>{{ item.authorName }} : {{ item.content }}</span>
-        <el-button type="text" class="cursor-pointer">
-          阅读全文
-          <i class="el-icon-arrow-down"></i>
-        </el-button>
-      </div>
-      <div class="comment-box" v-show="false">
-        <el-button class="comment-button">
-          <i class="el-icon-caret-top"></i>
-          赞同
-          {{ item.agreeNum }}
-        </el-button>
-        <el-button class="comment-button padding-button" style="width: 40px">
-          <i class="el-icon-caret-bottom"></i>
-        </el-button>
-        <div class="image-text-comment">
-          <span class="img-flex">
-            <img src="../../assets/content/comment.png" class="img-style" />
-          </span>
-          {{ item.commentNum }}
-          条评论
-        </div>
-        <div class="image-text-comment">
-          <span class="img-flex">
-            <img src="../../assets/content/collection.png" class="img-style" />
-          </span>
-          收藏
-        </div>
-        <div class="image-text-comment">
-          <span class="img-flex">
-            <img src="../../assets/content/like.png" class="img-style" />
-          </span>
-          {{ item.isLike ? "取消喜欢" : "喜欢" }}
-        </div>
-        <el-dropdown trigger="click" style="margin-left: 40px">
-          <span class="el-dropdown-link"
-            ><i class="el-icon-more el-icon--right"></i
-          ></span>
-          <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>举报</el-dropdown-item>
-            <el-dropdown-item>不感兴趣</el-dropdown-item>
-          </el-dropdown-menu>
-        </el-dropdown>
-      </div>
+      <question-info-part :item="item"></question-info-part>
     </div>
   </div>
 </template>
 
 <script>
 // import contentList from "@/localData/homeContent.js";
+import formatFunction from "@/utils/formatHtml";
+import QuestionInfoPart from "../questionComponents/QuestionInfoPart";
 export default {
   name: "RecommandContent",
-  components: {},
+  components: {QuestionInfoPart},
   data() {
     return {
-      contentInfo: []
+      contentInfo: [],
+      pageNum: 0,
+      busy: false,
+      showBottom: false
     };
   },
   computed: {},
   created() {
-    console.log(this.contentInfo);
-    this.getContentInfo(0);
+    this.loadSet();
   },
   mounted() {},
   watch: {},
   methods: {
-    getContentInfo(startNum) {
+    getContentInfo(pageNum) {
+      var start = pageNum * 10;
       var url = "http://localhost:3000/question/query";
       this.$jq.ajax({
         url: url,
         type: "post",
         contentType: "application/json",
         data: JSON.stringify({
-          start: startNum,
-          num: 20
+          start: start,
+          num: 10
         }),
         success: res => {
-          console.log(res);
-          var resultData = [];
+          if (res.info.length === 0) {
+            this.showBottom = true;
+          }
           res.info.forEach(item => {
             var data = {
               id: item.question_id,
               title: item.question_title,
               image: null,
               isshow: false,
+              showContent: false,
               authorName: "",
-              content: ""
+              content: "",
+              htmlText: ""
             };
             if (item.answeInfo.length > 0) {
               var contentParam = item.answeInfo[0];
-              item.isshow = true;
-              console.log(contentParam);
+              data.isshow = true;
+              var dataFormat = formatFunction.formatText(
+                contentParam.answer_info
+              );
+              console.log(dataFormat);
+              data.image = dataFormat.img;
+              data.content = dataFormat.text;
+              data.authorName = contentParam.user_name;
+              data.htmlText = contentParam.answer_info;
             }
-            resultData.push(data);
+            this.contentInfo.push(data);
           });
-          this.contentInfo = resultData;
+          this.pageNum++;
+          this.busy = false;
         },
         error: err => {
           console.log(err);
         }
       });
     },
-    showAnswer(id) {
-      console.log(id);
-      this.$router.push({
-        path: "questionInfo",
-        query: {
-          id: id
-        }
+    loadSet() {
+      if (this.showBottom) return;
+      this.busy = true;
+      this.$nextTick(() => {
+        this.getContentInfo(this.pageNum);
       });
     }
   }
@@ -138,6 +94,7 @@ export default {
 <style lang="scss">
 .recommand-content-style {
   width: 100%;
+  height: 100%;
   background-color: #fff;
   .cursor-pointer {
     cursor: pointer;
@@ -161,7 +118,6 @@ export default {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background-image: url("../../assets/example.jpg");
     float: left;
   }
   .image-article-style {

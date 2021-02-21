@@ -23,13 +23,13 @@
       <div class="title-box">登  录</div>
       <el-form :model="loginInfo" label-width="80px" class="form-style" :rules="rules" ref="refForm" :hide-required-asterisk="true">
         <el-form-item label="用户名" prop="userName">
-          <el-input v-model="loginInfo.userName" placeholder="请输入用户名"></el-input>
+          <el-input v-model="loginInfo.user_phone" placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="userPassword">
           <el-input v-model="loginInfo.userPassword" placeholder="请输入密码" type="password"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="text">没有登录名？立即注册</el-button>
+          <el-button type="text" @click="registerSet">没有登录名？立即注册</el-button>
           <el-button type="primary" @click="submitForm">登录</el-button>
         </el-form-item>
       </el-form>
@@ -43,16 +43,16 @@ export default {
   data() {
     return {
       loginInfo: {
-        userName: "",
+        user_phone: "",
         userPassword: ""
       },
       rules: {
-        userName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
+        user_phone: [
+          { required: true, message: "请输入用户名", trigger: "blur" }
         ],
         userPassword: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-        ],
+          { required: true, message: "请输入密码", trigger: "blur" }
+        ]
       }
     };
   },
@@ -62,49 +62,55 @@ export default {
         if (valid) {
           this.loginSet();
         } else {
-          console.log('error submit!!');
+          console.log("error submit!!");
           return false;
         }
       });
     },
 
     loginSet() {
-
       var url = "http://localhost:3000/userInfo/queryLogin";
       this.$jq.ajax({
         url: url,
         type: "post",
-        contentType: 'application/json',
+        contentType: "application/json",
         data: JSON.stringify(this.loginInfo),
-        success: (res) => {
+        success: res => {
           console.log(res);
-          if(res.status == 0) {
+          if (res.status === 0) {
             this.$message({
               message: res.msg,
               error: "warning"
-            })
+            });
           } else if(res.status == 1) {
             var loginData = {
               isLogin: true,
               userId: res.info[0].user_id,
               userName: res.info[0].user_name,
+              userInfo: res.info[0].user_info
             };
             this.$message({
               message: res.msg,
               error: "success"
-            })
-            this.$store.commit('setLoginData', loginData);
-            console.log(this.$store.state.loginData);
+            });
+            this.$store.commit("setLoginData", loginData);
+            this.$store.commit("setAvatar", res.info[0].user_avatar);
             this.$router.push({
               path: "/homePage"
-            })
+            });
           }
         },
         error: (err) => {
           console.log(err);
         }
-      })
+      });
 
+    },
+
+    registerSet() {
+      this.$router.push({
+        path: "/registerPage"
+      });
     }
   }
 };

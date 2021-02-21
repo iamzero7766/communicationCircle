@@ -1,0 +1,278 @@
+<template>
+  <div class="my-homepage-style">
+    <div class="top-part-box">
+      <div class="home-back">
+        <el-image
+          :src="
+            userInfo.user_back
+              ? userInfo.user_back
+              : 'http://localhost:3000/default.jpg'
+          "
+          fit="cover"
+          class="img-style"
+        ></el-image>
+        <el-upload
+          class="upload-demo"
+          action="http://localhost:3000/backImage"
+          :show-file-list="false"
+          :on-success="uploadSuccess"
+          :multiple="false"
+          :limit="1"
+          :file-list="fileList"
+          v-show="user_id == myID"
+        >
+          <el-button size="small" class="upload-button" icon="el-icon-camera">点击上传</el-button>
+        </el-upload>
+      </div>
+      <div class="info-box">
+        <div class="text-style">{{ userInfo.user_name }}</div>
+        <div class="text-small-style">一句话简介：{{ userInfo.user_info }}</div>
+      </div>
+      <div class="avatar-box">
+        <el-image
+          :src="
+            userInfo.user_avatar
+              ? userInfo.user_avatar
+              : 'http://localhost:3000/avatar.jpg'
+          "
+          fit="cover"
+          class="avatar-style"
+        ></el-image>
+        <el-upload
+          class="upload-avatar"
+          action="http://localhost:3000/avatarImage"
+          :show-file-list="false"
+          :on-success="uploadSuccessAvatar"
+          :multiple="false"
+          :limit="1"
+          :file-list="fileList"
+          v-show="user_id == myID"
+        >
+          <el-button size="small" class="upload-button" icon="el-icon-camera">点击上传</el-button>
+        </el-upload>
+      </div>
+    </div>
+    <div>
+      <el-tabs v-model="activeName" class="tab-box">
+        <el-tab-pane label="提问" name="1"></el-tab-pane>
+        <el-tab-pane label="回答" name="2"></el-tab-pane>
+        <el-tab-pane label="关注" name="3"></el-tab-pane>
+        <el-tab-pane label="文章" name="4"></el-tab-pane>
+<!--        <el-tab-pane label="收藏" name="5"></el-tab-pane>-->
+      </el-tabs>
+    </div>
+    <div class="content-info">
+      <info-question v-if="activeName === '1'" :user_id="user_id"></info-question>
+      <info-answer v-if="activeName === '2'" :user_id="user_id"></info-answer>
+      <follow-question v-if="activeName === '3'" :user_id="user_id"></follow-question>
+      <info-article v-if="activeName === '4'" :user_id="user_id"></info-article>
+    </div>
+  </div>
+</template>
+
+<script>
+import InfoQuestion from "../../components/infoComponents/InfoQuestion";
+import InfoAnswer from "../../components/infoComponents/InfoAnswer";
+import FollowQuestion from "../../components/infoComponents/FollowQuestion";
+import InfoArticle from "../../components/infoComponents/InfoArticle";
+import bus from "../../utils/bus";
+export default {
+  name: "MyHomepage",
+  components: { InfoArticle, FollowQuestion, InfoAnswer, InfoQuestion },
+  data() {
+    return {
+      myID: this.$store.state.loginData.userId,
+      user_id: this.$route.query.id,
+      userInfo: {},
+      activeName: this.$route.query.index ? this.$route.query.index : "1",
+      fileList: []
+    };
+  },
+  watch: {
+    $route() {
+      this.user_id = this.$route.query.id;
+      this.activeName = this.$route.query.index ? this.$route.query.index : "1";
+    },
+    user_id() {
+      this.getInfo();
+    }
+  },
+  methods: {
+    getInfo() {
+      console.log(this.$route);
+      var url = "http://localhost:3000/userInfo/queryById";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        data: JSON.stringify({
+          user_id: this.user_id
+        }),
+        success: res => {
+          console.log(res);
+          this.userInfo = res.info[0];
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
+
+    uploadSuccess(res) {
+      console.log(res);
+      if (res.flag) {
+        this.postBackImage(res.path);
+      }
+    },
+
+    uploadSuccessAvatar(res) {
+      if (res.flag) {
+        this.postAvatar(res.path);
+      }
+    },
+
+    postBackImage(path) {
+      var url = "http://localhost:3000/userInfo/updateBack";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        data: JSON.stringify({
+          user_id: this.user_id,
+          back: path
+        }),
+        success: res => {
+          console.log(res);
+          if (res.status) {
+            this.$message.success("上传成功");
+            this.userInfo.user_back = path;
+          }
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
+
+    postAvatar(path) {
+      var url = "http://localhost:3000/userInfo/updateAvatar";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        data: JSON.stringify({
+          user_id: this.user_id,
+          avatar: path
+        }),
+        success: res => {
+          console.log(res);
+          if (res.status) {
+            this.$message.success("上传成功");
+            this.userInfo.user_avatar = path;
+            bus.$emit("avatar", path);
+            this.$store.commit("setAvatar", path);
+          }
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    }
+
+  },
+  created() {
+    this.getInfo();
+  }
+};
+</script>
+
+<style lang="scss">
+.my-homepage-style {
+  width: 1000px;
+  margin: 0 auto;
+  .top-part-box {
+    width: 100%;
+    height: 355px;
+    position: relative;
+    border-bottom: 1px solid #f6f6f6;
+    .home-back {
+      width: 100%;
+      height: 240px;
+      position: relative;
+    }
+    .home-back:hover .upload-demo {
+      display: block;
+    }
+    .upload-demo {
+      position: absolute;
+      display: none;
+      top: 20px;
+      right: 20px;
+    }
+    .upload-button {
+      background: transparent;
+    }
+    .img-style {
+      width: 100%;
+      height: 100%;
+    }
+    .info-box {
+      width: 100%;
+      height: 115px;
+      background: #fff;
+    }
+    .text-style {
+      margin-left: 200px;
+      width: 800px;
+      height: 50px;
+      line-height: 50px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    .text-small-style {
+      margin-left: 200px;
+      width: 800px;
+      height: 30px;
+      line-height: 30px;
+      font-size: 14px;
+    }
+    .avatar-box {
+      position: absolute;
+      width: 160px;
+      height: 160px;
+      top: 160px;
+      left: 20px;
+      .avatar-style {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .upload-avatar {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      display: none;
+    }
+    .avatar-box:hover .upload-avatar {
+      display: block;
+    }
+  }
+  .tab-box {
+    width: 100%;
+    height: 40px;
+    background: #fff;
+    box-sizing: border-box;
+    padding-left: 20px;
+    .el-tabs__nav-wrap::after {
+      height: 0;
+    }
+  }
+  .content-info {
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
+    padding: 20px;
+    min-height: 100px;
+  }
+}
+</style>

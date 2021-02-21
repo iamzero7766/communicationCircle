@@ -1,6 +1,10 @@
 <template lang="html">
-  <div class="editor-component">
-    <div ref="toolbar" class="editor-component-toolbar" v-show="showHeader"></div>
+  <div class="comment-editor-component">
+    <div
+      ref="toolbar"
+      class="editor-component-toolbar"
+      v-show="showHeader"
+    ></div>
     <div ref="editor" class="editor-component-text"></div>
   </div>
 </template>
@@ -8,7 +12,7 @@
 <script>
 import E from "wangeditor";
 export default {
-  name: "EditorComponent",
+  name: "CommentEditor",
   data() {
     return {
       // uploadPath,
@@ -32,9 +36,6 @@ export default {
     showHeader: {
       type: Boolean,
       default: true
-    },
-    menu: {
-      default: []
     },
     isClear: {
       type: Boolean,
@@ -62,76 +63,27 @@ export default {
   },
   methods: {
     seteditor() {
-      var self = this;
       // 菜单
       this.editor = new E(this.$refs.toolbar, this.$refs.editor);
-      if (this.menu.length > 0) {
-        this.editor.config.menus = this.menu;
-      } else {
-        this.editor.config.menus = [
-          "head", // 标题
-          "bold", // 粗体
-          "fontSize", // 字号
-          "fontName", // 字体
-          "italic", // 斜体
-          "underline", // 下划线
-          "strikeThrough", // 删除线
-          "foreColor", // 文字颜色
-          "backColor", // 背景颜色
-          "link", // 插入链接
-          "list", // 列表
-          "justify", // 对齐方式
-          "quote", // 引用
-          "emoticon", // 表情
-          "image", // 插入图片
-          "table", // 表格
-          "video", // 插入视频
-          "code", // 插入代码
-          "undo", // 撤销
-          "redo", // 重复
-          "fullscreen" // 全屏
-        ];
-      }
+      this.editor.config.menus = [
+        "head", // 标题
+        "bold", // 粗体
+        "fontSize", // 字号
+        "fontName", // 字体
+        "italic", // 斜体
+        "underline", // 下划线
+        "strikeThrough", // 删除线
+        "foreColor", // 文字颜色
+        "backColor", // 背景颜色
+        "link"
+      ];
       this.editor.config.placeholder = this.placeValue;
       this.editor.config.uploadImgShowBase64 = false;
       this.editor.config.showLinkImg = false;
       this.editor.config.uploadImgServer = "http://localhost:3000/image";
-      // this.editor.customConfig.uploadImgShowBase64 = false; // base 64 存储图片
-      // this.editor.customConfig.uploadImgServer =
-      //   "http://otp.cdinfotech.top/file/upload_images"; // 配置服务器端地址
-      // this.editor.customConfig.uploadImgHeaders = {}; // 自定义 header
-      // this.editor.config.uploadFileName = "file"; // 后端接受上传文件的参数名
       this.editor.config.uploadImgMaxSize = 10 * 1024 * 1024; // 将图片大小限制为 2M
       this.editor.config.uploadImgMaxLength = 1; // 限制一次最多上传 3 张图片
       this.editor.config.uploadImgTimeout = 3 * 60 * 1000; // 设置超时时间
-
-      this.editor.config.customUploadImg = function(files, insert) {
-        console.log(files);
-        if (files[0]) {
-          const formData = new window.FormData();
-          formData.append("file", files[0], "cover.jpg");
-          self.$jq.ajax({
-            url: "http://localhost:3000/image",
-            type: "post",
-            contentType: false,
-            data: formData,
-            processData: false,
-            success: res => {
-              console.log(res);
-              if (res.flag) {
-                insert(res.path);
-              }
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
-        } else {
-          console.log("hhhh");
-        }
-      };
-
-
       this.editor.config.onchange = html => {
         this.info_ = html; // 绑定当前逐渐地值
         this.$emit("change", this.info_); // 将内容同步到父组件中
@@ -146,7 +98,7 @@ export default {
 </script>
 
 <style lang="css">
-.editor-component {
+.comment-editor-component {
   width: 100%;
   height: 100%;
   margin: 0 auto;
@@ -157,8 +109,7 @@ export default {
   border: 1px solid #ccc;
 }
 .editor-component-text {
-  min-height: 200px;
-  height: calc(100% - 50px);
+  min-height: 40px;
   border: 0;
 }
 </style>

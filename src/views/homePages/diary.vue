@@ -36,7 +36,12 @@
       </div>
     </div>
     <div class="options-box">
-      <el-date-picker v-model="month" type="month" style="width: 100%">
+      <el-date-picker
+        value-format="timestamp"
+        v-model="month"
+        type="month"
+        style="width: 100%"
+      >
       </el-date-picker>
       <div class="date-picker">
         <el-button class="button-class" @click="searchDate">查询</el-button>
@@ -45,7 +50,11 @@
         <el-button class="button-class" @click="addToday">今日</el-button>
       </div>
     </div>
-    <el-dialog :visible.sync="dialogVisible" class="dialog-class" :title="todayTitle">
+    <el-dialog
+      :visible.sync="dialogVisible"
+      class="dialog-class"
+      :title="todayTitle"
+    >
       <div class="dialog-top-box">
         <div class="dialog-one-part">天气： {{ todayType }}</div>
         <div class="dialog-one-part">温度： {{ todayTemp }}</div>
@@ -78,7 +87,7 @@ export default {
       todayTitle: "",
       todayType: "",
       todayTemp: "",
-      todayValue: "",
+      todayValue: ""
     };
   },
   created() {
@@ -86,15 +95,13 @@ export default {
     this.getMonthDate(this.month);
   },
   methods: {
-
     // 获取当月最后一天或第一天 的 时间戳
     getDay(date) {
       var newDate = new Date(date);
       var firstDay = new Date(newDate.getFullYear(), date.getMonth(), 1);
       var lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 1);
-      return [firstDay, lastDay]
+      return [firstDay, lastDay];
     },
-
 
     searchDate() {
       console.log(this.month);
@@ -142,12 +149,9 @@ export default {
     // 获取当月的天数
     getDayNumber(date) {
       var curDate = new Date(date);
-      var curMonth = curDate.getMonth();
-      curDate.setMonth(curMonth + 1);
-      curDate.setDate(0);
-      return curDate.getDate();
+      var newdate = new Date(curDate.getFullYear(), curDate.getMonth() + 1, 0);
+      return newdate.getDate();
     },
-
 
     // 获取当月日记内容
     getDiaryContent(start, end) {
@@ -155,21 +159,23 @@ export default {
       this.$jq.ajax({
         url: url,
         type: "post",
-        contentType: 'application/json',
+        contentType: "application/json",
         data: JSON.stringify({
           user_id: this.$store.state.loginData.userId,
           dt_start: start.getTime() / 1000,
-          dt_end: end.getTime() / 1000,
+          dt_end: end.getTime() / 1000
         }),
-        success: (res) => {
+        success: res => {
           console.log(res);
-          if(res.info.length === 0) return;
+          if (res.info.length === 0) return;
           res.info.forEach(item => {
             var month = new Date(item.dt_create * 1000).getMonth() + 1;
             var day = new Date(item.dt_create * 1000).getDate();
             var year = new Date(item.dt_create * 1000).getFullYear();
-            var hasContent = this.dataList.find(x => x.month===month && x.day === day && x.year === year);
-            if(hasContent) {
+            var hasContent = this.dataList.find(
+              x => x.month === month && x.day === day && x.year === year
+            );
+            if (hasContent) {
               hasContent.value = item.value;
               hasContent.temp = item.temp;
               hasContent.type = item.type;
@@ -179,19 +185,19 @@ export default {
           });
           console.log(this.dataList);
         },
-        error: (err) => {
+        error: err => {
           console.log(err);
         }
-      })
+      });
     },
 
     // 获取当天日记
     showInfo(item) {
       console.log(item);
-      if(!item.isShow) return;
+      if (!item.isShow) return;
       this.dialogVisible = true;
       this.htmlContent = item.detail;
-      this.todayTitle = item.year + '-' + item.month + '-' + item.day;
+      this.todayTitle = item.year + "-" + item.month + "-" + item.day;
       this.todayType = item.type;
       this.todayTemp = item.temp;
       this.todayValue = item.value;

@@ -22,8 +22,8 @@ export default {
   data() {
     return {
       personalData: [
-        { name: "回答问题", path: "", image: "answer", key: 1 },
-        { name: "日志", path: "/diary", image: "book", key: 2 }
+        { name: "写文章", path: "/articlePage", image: "article", key: 2 },
+        { name: "日志", path: "/diary", image: "diary", key: 3 }
       ]
     };
   },
@@ -40,8 +40,10 @@ export default {
 <style lang="scss">
 .personal-component-box {
   width: 100%;
-  height: 100px;
+  height: 80px;
   display: flex;
+  background: #fff;
+  box-shadow: 0 0 5px #ddd;
   .image-box {
     flex: 1;
     text-align: center;

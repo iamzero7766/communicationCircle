@@ -7,32 +7,39 @@
       mode="horizontal"
       @select="handleSelect"
     >
-      <el-menu-item index="1">首页</el-menu-item>
-      <el-menu-item index="2">会员</el-menu-item>
-      <el-menu-item index="3">发现</el-menu-item>
-      <el-menu-item index="4">等你来答</el-menu-item>
+      <el-menu-item index="1">问答</el-menu-item>
+      <el-menu-item index="2">文章</el-menu-item>
     </el-menu>
-    <el-input :placeholder="placeholder" class="input-style">
-      <el-button slot="append" icon="el-icon-search"></el-button>
-    </el-input>
+    <el-autocomplete
+      v-model="inputSearch"
+      :fetch-suggestions="querySearchAsync"
+      class="input-style"
+      :placeholder="placeholder"
+      :trigger-on-focus="false"
+      @select="handleSelectSearch"
+    ></el-autocomplete>
     <el-button class="button-style" @click="askClick">提问</el-button>
-    <el-badge :value="messageNum" :max="99" class="item">
-      <el-button class="message-button message-icon"></el-button>
-    </el-badge>
-    <el-badge :value="infoNum" :max="99" class="item">
-      <el-button class="message-button chat-icon"></el-button>
-    </el-badge>
     <div class="avator-style">
-      <el-avatar
-        :size="40"
-        src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        fit="contain"
-      ></el-avatar>
+      <el-dropdown trigger="click" @command="handleCommand">
+        <el-avatar :size="40" :src="avator" fit="contain"></el-avatar>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item icon="el-icon-user" command="1"
+            >我的主页</el-dropdown-item
+          >
+          <el-dropdown-item icon="el-icon-setting" command="2"
+            >设置</el-dropdown-item
+          >
+          <el-dropdown-item icon="el-icon-close" command="3"
+            >退出</el-dropdown-item
+          >
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
 
     <el-dialog
       title="MYquestion"
       :visible.sync="visibleDialog"
+      :append-to-body="true"
       class="dialog-box"
     >
       <el-input
@@ -50,7 +57,9 @@
         @change="change"
         :menu="menuList"
       ></editor-component>
-      <el-checkbox v-model="checked" style="margin-top: 15px">我要匿名</el-checkbox>
+      <el-checkbox v-model="checked" style="margin-top: 15px"
+        >我要匿名</el-checkbox
+      >
       <div slot="footer" class="dialog-footer">
         <el-button @click="visibleDialog = false">取 消</el-button>
         <el-button type="primary" @click="addQuestion">发布</el-button>
@@ -61,6 +70,7 @@
 
 <script>
 import EditorComponent from "../components/editor/EditorComponent";
+import bus from "../utils/bus.js";
 export default {
   name: "AppHeader",
   components: { EditorComponent },
@@ -68,7 +78,8 @@ export default {
     return {
       appName: "CENTER",
       activeIndex: "1",
-      placeholder: "hhhhhhh",
+      placeholder: "请输入你想搜索的问答",
+      inputSearch: "",
       messageNum: 22,
       infoNum: 10,
       avatorUrl: "../assets/avator.jpg",
@@ -82,24 +93,81 @@ export default {
       questionTitle: "",
       questionInfo: "",
       checked: false,
-      placeValue: "详细描述具体问题"
+      placeValue: "详细描述具体问题",
+      avator: this.$store.state.avatar,
+      questionList: [],
+      articleList: []
     };
   },
   computed: {},
   created() {},
-  mounted() {},
+  mounted() {
+    bus.$on("avatar", args => {
+      this.avator = args;
+    });
+    this.searchQuestionAll();
+    this.searchArticleAll();
+  },
   methods: {
     handleSelect(key) {
       console.log(key);
+      if (key == 1) {
+        this.placeholder = "请输入你想搜索的问答";
+        this.$router.push({
+          path: "homePage"
+        });
+      } else if (key == 2) {
+        this.placeholder = "请输入你想搜索的文章";
+        this.$router.push({
+          path: "homeArticle"
+        });
+      }
+    },
+
+    handleCommand(command) {
+      console.log(command);
+      if (command === "2") {
+        // 设置
+        this.$router.push({
+          path: "/userInfo"
+        });
+      } else if (command === "1") {
+        // 主页
+        this.$router.push({
+          path: "/myHomepage",
+          query: {
+            id: this.$store.state.loginData.userId
+          }
+        });
+      } else {
+        // 退出
+        this.logout();
+      }
     },
 
     askClick() {
       this.visibleDialog = true;
+      this.questionTitle = "";
+      this.questionInfo = "";
+      this.checked = false;
     },
     routerHome() {
       this.$router.push({
-        path: "/"
+        path: "/homePage"
       });
+    },
+
+    logout() {
+      this.$router.replace({
+        path: "/loginPage"
+      });
+      var loginData = {
+        isLogin: false,
+        userId: "",
+        userName: "",
+        userInfo: ""
+      };
+      this.$store.commit("setLoginData", loginData);
     },
 
     change(val) {
@@ -134,7 +202,74 @@ export default {
               type: "success"
             });
             this.visibleDialog = false;
+            this.$router.push({
+              path: "questionInfo",
+              query: {
+                id: res.info.insertId
+              }
+            });
           }
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
+
+    querySearchAsync(queryString, cb) {
+      var list = this.activeIndex == "1" ? this.questionList : this.articleList;
+      var results = queryString ? list.filter(this.createFilter(queryString)) : [];
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return item => {
+        if(this.activeIndex == "1") {
+          return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1);
+        } else {
+          return (item.value.toLowerCase().indexOf(queryString.toLowerCase()) > -1);
+        }
+      };
+    },
+    handleSelectSearch(item) {
+      this.$router.push({
+        path: "questionInfo",
+        query: {
+          id: item.id
+        }
+      });
+    },
+
+    searchQuestionAll() {
+      var url = "http://localhost:3000/question/queryAll";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        success: res => {
+          this.questionList = res.info;
+          this.questionList.map(item => {
+            item.value = item.question_title;
+            item.id = item.question_id;
+          });
+        },
+        error: err => {
+          console.log(err);
+        }
+      });
+    },
+    searchArticleAll() {
+      var url = "http://localhost:3000/article/queryAll";
+      this.$jq.ajax({
+        url: url,
+        type: "post",
+        contentType: "application/json",
+        success: res => {
+          this.articleList = res.info;
+          this.articleList.map(item => {
+            item.value = item.arcticle_title;
+            item.id = item.arcticle_id;
+          });
         },
         error: err => {
           console.log(err);
@@ -154,6 +289,9 @@ export default {
   border-bottom: 1px solid #ddd;
   box-shadow: 0 0 5px #ddd;
   background: #fff;
+  position: fixed;
+  top: 0;
+  z-index: 999;
   .app-header-title {
     width: 100px;
     height: 100%;
@@ -173,15 +311,7 @@ export default {
     width: 400px;
     margin-left: 50px;
     .el-input__inner {
-      border-top-left-radius: 20px;
-      border-bottom-left-radius: 20px;
-      border-right-width: 0;
-    }
-    .el-input-group__append {
-      border-top-right-radius: 20px;
-      border-bottom-right-radius: 20px;
-      background: #fff;
-      border-left-width: 0;
+      border-radius: 20px;
     }
   }
   .button-style {

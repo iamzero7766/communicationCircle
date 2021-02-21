@@ -8,8 +8,10 @@ export default new Vuex.Store({
     loginData: {
       isLogin: false,
       userId: "",
-      userName: ""
-    }
+      userName: "",
+      userInfo: ""
+    },
+    avatar: ""
   },
   getters: {
     getLoginData: state => state.loginData
@@ -19,6 +21,9 @@ export default new Vuex.Store({
     // set方法
     setLoginData(state, loginData) {
       state.loginData = loginData;
+    },
+    setAvatar(state, string) {
+      state.avatar = string;
     }
 
   },

@@ -146,7 +146,10 @@ export default {
           if(res.status == 1) {
             this.$message({
               message: "添加成功！",
-              type: "success",
+              type: "success"
+            });
+            this.$router.push({
+              path: "/diary"
             });
           }
         },
@@ -157,7 +160,7 @@ export default {
     },
 
     updateToday() {
-      if(this.detail == "") {
+      if (this.detail === "") {
         this.$message({
           message: "请填写内容",
           type: "warnning"
@@ -168,27 +171,30 @@ export default {
       this.$jq.ajax({
         url: url,
         type: "post",
-        contentType: 'application/json',
+        contentType: "application/json",
         data: JSON.stringify({
           user_id: this.$store.state.loginData.userId,
           value: this.happyNumber,
           dt_create: this.dt_create,
-          content: this.detail,
+          content: this.detail
         }),
-        success: (res) => {
+        success: res => {
           console.log(res);
-          if(res.status == 1) {
+          if (res.status === 1) {
             this.$message({
               message: "添加成功！",
               type: "success",
             });
+            this.$router.push({
+              path: "/diary"
+            });
           }
         },
-        error: (err) => {
+        error: err => {
           console.log(err);
         }
-      })
-    },
+      });
+    }
 
 
 
