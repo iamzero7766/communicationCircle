@@ -231,6 +231,7 @@ export default {
     }
   },
   created() {
+    this.articleId = this.$route.query.id;
     this.getInfo();
     this.getCommentsAll();
   }

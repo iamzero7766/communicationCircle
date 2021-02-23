@@ -94,6 +94,7 @@ router.beforeEach((to, from, next) => {
     store.commit("setLoginData", loginData);
     next();
   } else {
+    localStorage.getItem("messageStore") && store.replaceState(Object.assign(store.state,JSON.parse(localStorage.getItem("messageStore"))));
     if (store.state.loginData.isLogin) {
       next();
     } else {

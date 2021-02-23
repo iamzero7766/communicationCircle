@@ -111,6 +111,7 @@ export default {
   methods: {
     handleSelect(key) {
       console.log(key);
+      this.activeIndex = key;
       if (key == 1) {
         this.placeholder = "请输入你想搜索的问答";
         this.$router.push({
@@ -155,6 +156,7 @@ export default {
       this.$router.push({
         path: "/homePage"
       });
+      location.reload();
     },
 
     logout() {
@@ -232,12 +234,21 @@ export default {
       };
     },
     handleSelectSearch(item) {
-      this.$router.push({
-        path: "questionInfo",
-        query: {
-          id: item.id
-        }
-      });
+      if(this.activeIndex == "1") {
+        this.$router.push({
+          path: "questionInfo",
+          query: {
+            id: item.id
+          }
+        });
+      } else {
+        this.$router.push({
+          path: "showArticlePage",
+          query: {
+            id: item.id
+          }
+        });
+      }
     },
 
     searchQuestionAll() {

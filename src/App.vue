@@ -41,6 +41,13 @@ export default {
 
   created() {
     console.log(this.$store.state.loginData);
+    window.addEventListener("beforeunload",()=>{
+
+      localStorage.setItem("messageStore", JSON.stringify(this.$store.state));
+
+    });
+    //在页面加载时读取localStorage里的状态信息
+    localStorage.getItem("messageStore") && this.$store.replaceState(Object.assign(this.$store.state,JSON.parse(localStorage.getItem("messageStore"))));
   }
 };
 </script>

@@ -95,6 +95,10 @@ export default {
             });
             this.$store.commit("setLoginData", loginData);
             this.$store.commit("setAvatar", res.info[0].user_avatar);
+            localStorage.setItem(
+              "messageStore",
+              JSON.stringify(this.$store.state)
+            );
             this.$router.push({
               path: "/homePage"
             });
