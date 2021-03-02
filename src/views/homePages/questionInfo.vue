@@ -16,19 +16,29 @@
           </div>
         </div>
         <div class="button-box">
-          <el-button type="primary" size="small" @click="answerQuestion" v-show="!showButton"
-          >回答问题</el-button
+          <el-button
+            type="primary"
+            size="small"
+            @click="answerQuestion"
+            v-show="!showButton"
+            >回答问题</el-button
           >
-          <el-button type="primary" size="small" @click="showMyAnswer" v-show="showButton"
-          >查看回答</el-button
+          <el-button
+            type="primary"
+            size="small"
+            @click="showMyAnswer"
+            v-show="showButton"
+            >查看回答</el-button
           >
-          <el-button size="small" @click="changeFollow">{{ followState ? "已关注" : "关注问题"}}</el-button>
+          <el-button size="small" @click="changeFollow">{{
+            followState ? "已关注" : "关注问题"
+          }}</el-button>
           <div class="button-icon margin-right20">
-            <img src="../../../public/homePage/bad.png" class="img-size">
+            <img src="../../../public/homePage/bad.png" class="img-size" />
             {{ badNum }}
           </div>
           <div class="button-icon">
-            <img src="../../../public/homePage/good.png" class="img-size">
+            <img src="../../../public/homePage/good.png" class="img-size" />
             好问题
             {{ goodNum }}
           </div>
@@ -37,11 +47,7 @@
       <div class="my-answer-box" v-if="showAnswer">
         <div class="user-info-box">
           <div class="avator-class">
-            <el-avatar
-                    :size="40"
-                    :src="avatar"
-                    fit="contain"
-            ></el-avatar>
+            <el-avatar :size="40" :src="avatar" fit="contain"></el-avatar>
           </div>
           <div class="item-class">
             <div class="font-size-big" v-show="!isanonymous">
@@ -60,18 +66,18 @@
         </div>
         <div class="editor-box-style">
           <editor-component
-                  v-model="userAnswer"
-                  class="editor-box"
-                  :isClear="isClear"
-                  :placeValue="placeValue"
-                  @change="change"
-                  :menu="menuList"
+            v-model="userAnswer"
+            class="editor-box"
+            :isClear="isClear"
+            :placeValue="placeValue"
+            @change="change"
+            :menu="menuList"
           ></editor-component>
         </div>
         <div class="editor-button-box">
           <el-button size="small" @click="showAnswer = false">取消</el-button>
           <el-button size="small" type="primary" @click="answerPost"
-          >提交</el-button
+            >提交</el-button
           >
         </div>
       </div>
@@ -80,9 +86,9 @@
           <div class="user-info-box">
             <div class="avator-class">
               <el-avatar
-                      :size="40"
-                      src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-                      fit="contain"
+                :size="40"
+                src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+                fit="contain"
               ></el-avatar>
             </div>
             <div class="item-class">
@@ -97,12 +103,22 @@
               </div>
             </div>
           </div>
-          <div class="answer-content-box" v-html="userAnswerInfo.answer_info"></div>
-          <div class="answer-content-box" style="font-size: 12px; color: #666; height: 40px">
+          <div
+            class="answer-content-box"
+            v-html="userAnswerInfo.answer_info"
+          ></div>
+          <div
+            class="answer-content-box"
+            style="font-size: 12px; color: #666; height: 40px"
+          >
             编辑于{{ getMonthDay(userAnswerInfo.dt_create) }}
           </div>
           <div style="padding: 0 15px">
-            <el-button type="text" @click="changeAnswer(userAnswerInfo.answer_info)">修改回答</el-button>
+            <el-button
+              type="text"
+              @click="changeAnswer(userAnswerInfo.answer_info)"
+              >修改回答</el-button
+            >
           </div>
         </div>
       </div>
@@ -110,10 +126,12 @@
         {{ totalNum > 0 ? "共有回答" + totalNum + "个" : "暂无回答" }}
       </div>
       <div class="answer-info-box">
-        <div class="answer-info-box-scroll"
-             v-infinite-scroll="loadSet"
-             infinite-scroll-disabled="busy"
-             infinite-scroll-distance="10">
+        <div
+          class="answer-info-box-scroll"
+          v-infinite-scroll="loadSet"
+          infinite-scroll-disabled="busy"
+          infinite-scroll-distance="10"
+        >
           <div
             class="answer-item-info-style"
             v-for="item in answerList"
@@ -128,12 +146,26 @@
                 ></el-avatar>
               </div>
               <div class="item-class">
-                <div class="font-size-big cursor-pointer" v-show="!item.anonymous">
-                  <el-popover width="400"
-                          placement="right"
-                          trigger="click">
-                    <user-info-component v-bind:id="popverID"></user-info-component>
-                    <el-button slot="reference" type="text" @click="popverID = item.user_id">{{ item.user_name }}</el-button>
+                <div
+                  class="font-size-big cursor-pointer"
+                  v-show="!item.anonymous"
+                >
+                  <el-popover
+                    width="400"
+                    popper-class="user-popver-style"
+                    placement="right"
+                    class="user-popver-style"
+                    trigger="click"
+                  >
+                    <user-info-component
+                      v-bind:id="popverID"
+                    ></user-info-component>
+                    <el-button
+                      slot="reference"
+                      type="text"
+                      @click="popverID = item.user_id"
+                      >{{ item.user_name }}</el-button
+                    >
                   </el-popover>
                 </div>
                 <div class="font-size-small" v-show="!item.anonymous">
@@ -145,7 +177,10 @@
               </div>
             </div>
             <div class="answer-content-box" v-html="item.answer_info"></div>
-            <div class="answer-content-box" style="font-size: 12px; color: #666; height: 40px">
+            <div
+              class="answer-content-box"
+              style="font-size: 12px; color: #666; height: 40px"
+            >
               编辑于{{ item.day }}
             </div>
           </div>
@@ -154,7 +189,10 @@
     </div>
     <div class="right-box">
       <pic-component class="pic-box"></pic-component>
-      <user-info-component v-bind:id="questionUser" v-show="!questionAnonymous"></user-info-component>
+      <user-info-component
+        v-bind:id="questionUser"
+        v-show="!questionAnonymous"
+      ></user-info-component>
       <anonymos-user v-show="questionAnonymous"></anonymos-user>
       <attention-info></attention-info>
     </div>
@@ -170,7 +208,13 @@ import AnonymosUser from "../../components/userComponents/AnonymosUser";
 import AttentionInfo from "../../components/AttentionInfo";
 export default {
   name: "questionInfo",
-  components: {AttentionInfo, AnonymosUser, PicComponent, UserInfoComponent, EditorComponent },
+  components: {
+    AttentionInfo,
+    AnonymosUser,
+    PicComponent,
+    UserInfoComponent,
+    EditorComponent
+  },
   data() {
     return {
       isAnswered: false,
@@ -219,7 +263,6 @@ export default {
     };
   },
   methods: {
-
     loadSet() {
       console.log("1212121");
       this.busy = true;
@@ -238,7 +281,7 @@ export default {
     },
 
     getQuestionData(id) {
-      var url = "http://localhost:3000/question/queryByID";
+      var url = window.requestUrl + "question/queryByID";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -250,9 +293,11 @@ export default {
           console.log(res);
           var content = res.info[0];
           this.questionTitle = content.question_title;
-          if(content.question_info.length > 0) {
+          if (content.question_info.length > 0) {
             this.hasContent = true;
-            this.questionInfo = formatFunction.formatHtml(content.question_info);
+            this.questionInfo = formatFunction.formatHtml(
+              content.question_info
+            );
             this.questionContent = content.question_info;
           }
           this.questionUser = content.user_id;
@@ -265,7 +310,7 @@ export default {
     },
 
     getUserAnswerInfo(id) {
-      var url = "http://localhost:3000/answer/queryByID";
+      var url = window.requestUrl + "answer/queryByID";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -301,14 +346,13 @@ export default {
       this.userAnswer = text;
     },
 
-
     showAllContent() {
       this.showAll = !this.showAll;
     },
 
     getAnswerInfo(pageNum) {
       var start = pageNum * 5;
-      var url = "http://localhost:3000/answer/queryInfo";
+      var url = window.requestUrl + "answer/queryInfo";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -330,7 +374,7 @@ export default {
             this.answerList = this.answerList.concat(res.info);
           }
           this.pageNum++;
-          this.busy = (res.info.length === 0);
+          this.busy = res.info.length === 0;
         },
         error: err => {
           console.log(err);
@@ -347,7 +391,7 @@ export default {
     },
 
     getFollowState(id) {
-      var url = "http://localhost:3000/follow/query";
+      var url = window.requestUrl + "follow/query";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -367,12 +411,11 @@ export default {
     },
 
     changeFollow() {
-      var url = ""
+      var url = "";
       if (this.followState) {
-        url = "http://localhost:3000/follow/delete";
+        url = window.requestUrl + "follow/delete";
       } else {
-        url = "http://localhost:3000/follow/add";
-
+        url = window.requestUrl + "follow/add";
       }
       this.changeFollowReq(url);
     },
@@ -401,8 +444,8 @@ export default {
     // 增加回答
     answerPost() {
       var url = this.isAnswered
-        ? "http://localhost:3000/answer/update"
-        : "http://localhost:3000/answer/addQuestion";
+        ? window.requestUrl + "answer/update"
+        : window.requestUrl + "answer/addQuestion";
       this.$jq.ajax({
         url: url,
         type: "post",

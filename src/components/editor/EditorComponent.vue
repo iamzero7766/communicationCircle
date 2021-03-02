@@ -95,7 +95,7 @@ export default {
       this.editor.config.placeholder = this.placeValue;
       this.editor.config.uploadImgShowBase64 = false;
       this.editor.config.showLinkImg = false;
-      this.editor.config.uploadImgServer = "http://localhost:3000/image";
+      this.editor.config.uploadImgServer = window.requestUrl + "image";
       // this.editor.customConfig.uploadImgShowBase64 = false; // base 64 存储图片
       // this.editor.customConfig.uploadImgServer =
       //   "http://otp.cdinfotech.top/file/upload_images"; // 配置服务器端地址
@@ -111,7 +111,7 @@ export default {
           const formData = new window.FormData();
           formData.append("file", files[0], "cover.jpg");
           self.$jq.ajax({
-            url: "http://localhost:3000/image",
+            url: window.requestUrl + "image",
             type: "post",
             contentType: false,
             data: formData,
@@ -119,7 +119,7 @@ export default {
             success: res => {
               console.log(res);
               if (res.flag) {
-                insert(res.path);
+                insert(window.requestUrl + res.path);
               }
             },
             error: err => {

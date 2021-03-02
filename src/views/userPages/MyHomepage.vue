@@ -3,17 +3,13 @@
     <div class="top-part-box">
       <div class="home-back">
         <el-image
-          :src="
-            userInfo.user_back
-              ? userInfo.user_back
-              : 'http://localhost:3000/default.jpg'
-          "
+          :src="userInfo.user_back"
           fit="cover"
           class="img-style"
         ></el-image>
         <el-upload
           class="upload-demo"
-          action="http://localhost:3000/backImage"
+          :action="backUrl"
           :show-file-list="false"
           :on-success="uploadSuccess"
           :multiple="false"
@@ -30,17 +26,13 @@
       </div>
       <div class="avatar-box">
         <el-image
-          :src="
-            userInfo.user_avatar
-              ? userInfo.user_avatar
-              : 'http://localhost:3000/avatar.jpg'
-          "
+          :src="userInfo.user_avatar"
           fit="cover"
           class="avatar-style"
         ></el-image>
         <el-upload
           class="upload-avatar"
-          action="http://localhost:3000/avatarImage"
+          :action="avatarUrl"
           :show-file-list="false"
           :on-success="uploadSuccessAvatar"
           :multiple="false"
@@ -83,9 +75,14 @@ export default {
     return {
       myID: this.$store.state.loginData.userId,
       user_id: this.$route.query.id,
-      userInfo: {},
+      userInfo: {
+        user_back: window.requestUrl + "default.jpg",
+        user_avatar: window.requestUrl + "avatar.jpg"
+      },
       activeName: this.$route.query.index ? this.$route.query.index : "1",
-      fileList: []
+      fileList: [],
+      backUrl: window.requestUrl + "backImage",
+      avatarUrl: window.requestUrl + "avatarImage"
     };
   },
   watch: {
@@ -100,7 +97,7 @@ export default {
   methods: {
     getInfo() {
       console.log(this.$route);
-      var url = "http://localhost:3000/userInfo/queryById";
+      var url = window.requestUrl + "userInfo/queryById";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -121,18 +118,18 @@ export default {
     uploadSuccess(res) {
       console.log(res);
       if (res.flag) {
-        this.postBackImage(res.path);
+        this.postBackImage(window.requestUrl + res.path);
       }
     },
 
     uploadSuccessAvatar(res) {
       if (res.flag) {
-        this.postAvatar(res.path);
+        this.postAvatar(window.requestUrl + res.path);
       }
     },
 
     postBackImage(path) {
-      var url = "http://localhost:3000/userInfo/updateBack";
+      var url = window.requestUrl + "userInfo/updateBack";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -155,7 +152,7 @@ export default {
     },
 
     postAvatar(path) {
-      var url = "http://localhost:3000/userInfo/updateAvatar";
+      var url = window.requestUrl + "userInfo/updateAvatar";
       this.$jq.ajax({
         url: url,
         type: "post",

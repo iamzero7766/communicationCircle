@@ -170,7 +170,7 @@ export default {
     },
 
     reqRegister() {
-      var url = "http://localhost:3000/userInfo/add";
+      var url = window.requestUrl + "userInfo/add";
       this.$jq.ajax({
         url: url,
         type: "post",

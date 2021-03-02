@@ -1,81 +1,69 @@
 import Vue from "vue";
 import store from "../store/index.js";
 import VueRouter from "vue-router";
-import homePage from "../views/homePages/homePage";
-import diary from "../views/homePages/diary.vue";
-import addToday from "../views/homePages/addToday";
-import loginPage from "../views/loginPage";
-import questionInfo from "../views/homePages/questionInfo";
-import UserInfo from "../views/userPages/UserInfo";
-import MyHomepage from "../views/userPages/MyHomepage";
-import articlePage from "../views/homePages/articlePage";
-import showArticlePage from "../views/homePages/showArticlePage";
-import homeArticle from "../views/homePages/homeArticle";
 import bus from "@/utils/bus.js";
-import registerPage from "../views/registerPage";
-
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/loginPage",
     name: "loginPage",
-    component: loginPage
+    component: resolve => require(["../views/loginPage"], resolve)
   },
   {
     path: "/registerPage",
     name: "registerPage",
-    component: registerPage
+    component: resolve => require(["../views/registerPage"], resolve)
   },
   {
     path: "/",
     name: "loginPage",
-    component: loginPage
+    component: resolve => require(["../views/loginPage"], resolve)
   },
   {
     path: "/homePage",
     name: "homePage",
-    component: homePage
+    component: resolve => require(["../views/homePages/homePage"], resolve)
   },
   {
     path: "/diary",
     name: "diary",
-    component: diary
+    component: resolve => require(["../views/homePages/diary.vue"], resolve)
   },
   {
     path: "/addToday",
     name: "addToday",
-    component: addToday
+    component: resolve => require(["../views/homePages/addToday"], resolve)
   },
   {
     path: "/questionInfo",
     name: "questionInfo",
-    component: questionInfo
+    component: resolve => require(["../views/homePages/questionInfo"], resolve)
   },
   {
     path: "/userInfo",
     name: "userInfo",
-    component: UserInfo
+    component: resolve => require(["../views/userPages/UserInfo"], resolve)
   },
   {
     path: "/myHomepage",
     name: "myHomepage",
-    component: MyHomepage
+    component: resolve => require(["../views/userPages/MyHomepage"], resolve)
   },
   {
     path: "/articlePage",
     name: "articlePage",
-    component: articlePage
+    component: resolve => require(["../views/homePages/articlePage"], resolve)
   },
   {
     path: "/showArticlePage",
     name: "showArticlePage",
-    component: showArticlePage
+    component: resolve => require(["../views/homePages/showArticlePage"], resolve)
   },
   {
     path: "/homeArticle",
     name: "homeArticle",
-    component: homeArticle
+    component: resolve => require(["../views/homePages/homeArticle"], resolve)
   }
 ];
 
@@ -85,16 +73,23 @@ const router = new VueRouter({
 
 
 router.beforeEach((to, from, next) => {
-  if (to.path === "/loginPage" || to.path === "/registerPage") {
+  localStorage.getItem("messageStore") && store.replaceState(Object.assign(store.state,JSON.parse(localStorage.getItem("messageStore"))));
+  if (to.path === "/registerPage") {
     var loginData = {
       isLogin: false,
       userId: "",
       userName: ""
     };
     store.commit("setLoginData", loginData);
+    localStorage.removeItem("messageStore");
     next();
+  } else if(to.path === "/loginPage" || to.path == "/") {
+    if(store.state.loginData.isLogin) {
+      next( {name: "homePage"} );
+    } else {
+      next()
+    }
   } else {
-    localStorage.getItem("messageStore") && store.replaceState(Object.assign(store.state,JSON.parse(localStorage.getItem("messageStore"))));
     if (store.state.loginData.isLogin) {
       next();
     } else {

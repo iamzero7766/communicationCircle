@@ -160,9 +160,6 @@ export default {
     },
 
     logout() {
-      this.$router.replace({
-        path: "/loginPage"
-      });
       var loginData = {
         isLogin: false,
         userId: "",
@@ -170,6 +167,10 @@ export default {
         userInfo: ""
       };
       this.$store.commit("setLoginData", loginData);
+      localStorage.setItem("messageStore", JSON.stringify(this.$store.state));
+      this.$router.replace({
+        path: "/loginPage"
+      });
     },
 
     change(val) {
@@ -184,7 +185,7 @@ export default {
         });
         return;
       }
-      var url = "http://localhost:3000/question/addQuestion";
+      var url = window.requestUrl + "question/addQuestion";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -252,7 +253,7 @@ export default {
     },
 
     searchQuestionAll() {
-      var url = "http://localhost:3000/question/queryAll";
+      var url = window.requestUrl + "question/queryAll";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -270,7 +271,7 @@ export default {
       });
     },
     searchArticleAll() {
-      var url = "http://localhost:3000/article/queryAll";
+      var url = window.requestUrl + "article/queryAll";
       this.$jq.ajax({
         url: url,
         type: "post",

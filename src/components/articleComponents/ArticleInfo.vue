@@ -32,7 +32,7 @@ export default {
     },
 
     getInfo(page) {
-      var url = "http://localhost:3000/article/query";
+      var url = window.requestUrl + "article/query";
       var startNum = page * 10;
       this.$jq.ajax({
         url: url,

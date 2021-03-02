@@ -14,10 +14,10 @@ export default {
   data() {
     return {
       picList: [
-        { path: "http://localhost:3000/back111.jpeg", id: 1 },
-        { path: "http://localhost:3000/back1112.jpeg", id: 2 },
-        { path: "http://localhost:3000/back113.jpeg", id: 3 },
-        { path: "http://localhost:3000/back114.jpeg", id: 4 },
+        { path: window.requestUrl + "back111.jpeg", id: 1 },
+        { path: window.requestUrl + "back1112.jpeg", id: 2 },
+        { path: window.requestUrl + "back113.jpeg", id: 3 },
+        { path: window.requestUrl + "back114.jpeg", id: 4 },
       ]
     };
   },

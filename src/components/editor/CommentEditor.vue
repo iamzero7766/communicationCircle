@@ -80,7 +80,7 @@ export default {
       this.editor.config.placeholder = this.placeValue;
       this.editor.config.uploadImgShowBase64 = false;
       this.editor.config.showLinkImg = false;
-      this.editor.config.uploadImgServer = "http://localhost:3000/image";
+      this.editor.config.uploadImgServer = window.requestUrl + "image";
       this.editor.config.uploadImgMaxSize = 10 * 1024 * 1024; // 将图片大小限制为 2M
       this.editor.config.uploadImgMaxLength = 1; // 限制一次最多上传 3 张图片
       this.editor.config.uploadImgTimeout = 3 * 60 * 1000; // 设置超时时间

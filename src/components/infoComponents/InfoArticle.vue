@@ -57,7 +57,7 @@ export default {
 
     getArticleInfo(page) {
       var start = page * 10;
-      var url = "http://localhost:3000/article/queryByUser";
+      var url = window.requestUrl + "article/queryByUser";
       this.$jq.ajax({
         url: url,
         type: "post",

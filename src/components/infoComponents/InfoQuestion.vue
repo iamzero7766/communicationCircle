@@ -58,7 +58,7 @@ export default {
     
     getQuestionList(page) {
       var start = page * 10;
-      var url = "http://localhost:3000/question/queryByUser";
+      var url = window.requestUrl + "question/queryByUser";
       this.$jq.ajax({
         url: url,
         type: "post",

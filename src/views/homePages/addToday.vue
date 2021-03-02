@@ -86,7 +86,7 @@ export default {
 
     getInfoToday() {
 
-      var url = "http://localhost:3000/diary/queryToday";
+      var url = window.requestUrl + "diary/queryToday";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -128,7 +128,7 @@ export default {
         });
         return;
       }
-      var url = "http://localhost:3000/diary/addDiary";
+      var url = window.requestUrl + "diary/addDiary";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -167,7 +167,7 @@ export default {
         });
         return;
       }
-      var url = "http://localhost:3000/diary/updateDiary";
+      var url = window.requestUrl + "diary/updateDiary";
       this.$jq.ajax({
         url: url,
         type: "post",

@@ -144,7 +144,7 @@ export default {
     },
 
     addArticle() {
-      var url = "http://localhost:3000/article/addArticle";
+      var url = window.requestUrl + "article/addArticle";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -182,7 +182,7 @@ export default {
     // },
 
     getTags() {
-      var url = "http://localhost:3000/tag/query";
+      var url = window.requestUrl + "tag/query";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -214,6 +214,7 @@ export default {
     },
     handleSelect(item) {
       console.log(item);
+      this.tagValue = "";
       if (this.tags.length === 6) {
         this.$message.warning("最多添加6个标签");
         return false;
@@ -235,7 +236,7 @@ export default {
     },
     addTag() {
       console.log(this.tagValue);
-      var url = "http://localhost:3000/tag/add";
+      var url = window.requestUrl + "tag/add";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -254,6 +255,7 @@ export default {
             value: this.tagValue
           };
           this.tags.push(info);
+          this.tagValue = "";
         },
         error: err => {
           console.log(err);

@@ -5,7 +5,7 @@
         <el-avatar
           :size="60"
           shape="square"
-          src="http://localhost:3000/avatar.jpg"
+          :src="avatorSrc"
           fit="contain"
         ></el-avatar>
       </div>
@@ -20,7 +20,9 @@
 export default {
   name: "AnonymosUser",
   data() {
-    return {};
+    return {
+      avatorSrc: window.requestUrl + "avatar.jpg"
+    };
   },
   methods: {},
   created() {}

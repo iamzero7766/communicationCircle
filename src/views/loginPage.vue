@@ -69,7 +69,7 @@ export default {
     },
 
     loginSet() {
-      var url = "http://localhost:3000/userInfo/queryLogin";
+      var url = window.requestUrl + "userInfo/queryLogin";
       this.$jq.ajax({
         url: url,
         type: "post",

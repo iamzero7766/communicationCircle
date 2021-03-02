@@ -27,7 +27,7 @@ export default {
   methods: {
     getContentInfo(pageNum) {
       var start = pageNum * 10;
-      var url = "http://localhost:3000/follow/queryByUserQuestion";
+      var url = window.requestUrl + "follow/queryByUserQuestion";
       this.$jq.ajax({
         url: url,
         type: "post",

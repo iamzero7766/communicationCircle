@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     getUserInfo() {
-      var url = "http://localhost:3000/userInfo/getUserMessage";
+      var url = window.requestUrl + "userInfo/getUserMessage";
       this.$jq.ajax({
         url: url,
         type: "post",

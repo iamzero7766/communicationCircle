@@ -66,7 +66,7 @@ export default {
 
     getAnswerInfo(page) {
       var start = page * 10;
-      var url = "http://localhost:3000/answer/queryByUser";
+      var url = window.requestUrl + "answer/queryByUser";
       this.$jq.ajax({
         url: url,
         type: "post",

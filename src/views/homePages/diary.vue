@@ -155,7 +155,7 @@ export default {
 
     // 获取当月日记内容
     getDiaryContent(start, end) {
-      var url = "http://localhost:3000/diary/queryMonth";
+      var url = window.requestUrl + "diary/queryMonth";
       this.$jq.ajax({
         url: url,
         type: "post",

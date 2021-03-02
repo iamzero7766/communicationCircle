@@ -18,7 +18,7 @@ export default {
   },
   methods: {
     getTagList() {
-      var url = "http://localhost:3000/tag/query";
+      var url = window.requestUrl + "tag/query";
       this.$jq.ajax({
         url: url,
         type: "post",

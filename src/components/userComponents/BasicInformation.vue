@@ -203,7 +203,7 @@ export default {
       this.$store.commit("setLoginData", loginData);
     },
     getInfo() {
-      var url = "http://localhost:3000/userInfo/queryById";
+      var url = window.requestUrl + "userInfo/queryById";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -233,7 +233,7 @@ export default {
       });
     },
     checkPassword() {
-      var url = "http://localhost:3000/userInfo/checkPassword";
+      var url = window.requestUrl + "userInfo/checkPassword";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -259,7 +259,7 @@ export default {
       });
     },
     updatePassword() {
-      var url = "http://localhost:3000/userInfo/updatePassword";
+      var url = window.requestUrl + "userInfo/updatePassword";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -299,7 +299,7 @@ export default {
       });
     },
     updateName() {
-      var url = "http://localhost:3000/userInfo/updateName";
+      var url = window.requestUrl + "userInfo/updateName";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -340,7 +340,7 @@ export default {
       });
     },
     updateInfo() {
-      var url = "http://localhost:3000/userInfo/updateInfo";
+      var url = window.requestUrl + "userInfo/updateInfo";
       this.$jq.ajax({
         url: url,
         type: "post",

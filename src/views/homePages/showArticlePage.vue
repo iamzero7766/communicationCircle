@@ -117,7 +117,7 @@ export default {
   },
   methods: {
     getInfo() {
-      var url = "http://localhost:3000/article/queryInfo";
+      var url = window.requestUrl + "article/queryInfo";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -159,7 +159,7 @@ export default {
 
     getComments(page) {
       var start = page * 10;
-      var url = "http://localhost:3000/comment/queryByArticle";
+      var url = window.requestUrl + "comment/queryByArticle";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -186,7 +186,7 @@ export default {
     },
 
     getCommentsAll() {
-      var url = "http://localhost:3000/comment/queryByArticleAll";
+      var url = window.requestUrl + "comment/queryByArticleAll";
       this.$jq.ajax({
         url: url,
         type: "post",
@@ -205,7 +205,7 @@ export default {
     },
 
     submitComment() {
-      var url = "http://localhost:3000/comment/addComment";
+      var url = window.requestUrl + "comment/addComment";
       this.$jq.ajax({
         url: url,
         type: "post",

@@ -52,7 +52,7 @@ export default {
 
     getFollowList(page) {
       var start = page * 10;
-      var url = "http://localhost:3000/follow/queryByUser";
+      var url = window.requestUrl + "follow/queryByUser";
       this.$jq.ajax({
         url: url,
         type: "post",
