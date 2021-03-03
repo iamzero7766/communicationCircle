@@ -19,16 +19,8 @@ export default {
   methods: {
     getTagList() {
       var url = window.requestUrl + "tag/query";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        success: res => {
-          this.tagList = res.info;
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {}).then(res => {
+        this.tagList = res.info;
       });
     },
 

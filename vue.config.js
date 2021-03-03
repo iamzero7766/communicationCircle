@@ -1,27 +1,23 @@
-// const isProduction = process.env.NODE_ENV !== 'development'
-// const devNeedCdn = false
-// const cdn = {
-//   externals: {
-//     vue: 'Vue',
-//     vuex: 'Vuex',
-//     'vue-router': 'VueRouter'
-//   },
-//   css: [],
-//   js: [
-//     'https://cdn.staticfile.org/vue/2.6.10/vue.min.js',
-//     'https://cdn.staticfile.org/vuex/3.0.1/vuex.min.js',
-//     'https://cdn.staticfile.org/vue-router/3.0.3/vue-router.min.js'
-//   ]
-// }
+const CompressionPlugin = require('compression-webpack-plugin');
+
 module.exports = {
-  // productionSourceMap: false
-  // chainWebpack: config => {
-  //   config.plugin("html").tap(args => {
-  //     if (isProduction || devNeedCdn) args[0].cdn = cdn
-  //     return args
-  //   })
-  // },
-  // configureWebpack: config => {
-  //   if (isProduction || devNeedCdn) config.externals = cdn.externals
-  // }
-}
+  productionSourceMap: false, // 是否在构建生产包时生成 sourceMap 文件，false将提高构建速度
+  chainWebpack: config => {
+    config.plugins.delete('prefetch')
+  },
+  configureWebpack: (config) => {
+    if(process.env.NODE_ENV === 'production') {
+      config.mode = 'production';
+      return {
+        plugins: [ new CompressionPlugin({
+          filename: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: /\.js$|\.html$|\.css/, //匹配文件名
+          threshold: 10240, //对超过10k的数据进行压缩
+          deleteOriginalAssets: false //是否删除原文件
+        })]
+      }
+
+    }
+  },
+};

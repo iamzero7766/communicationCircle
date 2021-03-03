@@ -156,38 +156,28 @@ export default {
     // 获取当月日记内容
     getDiaryContent(start, end) {
       var url = window.requestUrl + "diary/queryMonth";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          dt_start: start.getTime() / 1000,
-          dt_end: end.getTime() / 1000
-        }),
-        success: res => {
-          console.log(res);
-          if (res.info.length === 0) return;
-          res.info.forEach(item => {
-            var month = new Date(item.dt_create * 1000).getMonth() + 1;
-            var day = new Date(item.dt_create * 1000).getDate();
-            var year = new Date(item.dt_create * 1000).getFullYear();
-            var hasContent = this.dataList.find(
-              x => x.month === month && x.day === day && x.year === year
-            );
-            if (hasContent) {
-              hasContent.value = item.value;
-              hasContent.temp = item.temp;
-              hasContent.type = item.type;
-              hasContent.detail = item.content;
-              hasContent.isShow = true;
-            }
-          });
-          console.log(this.dataList);
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        dt_start: start.getTime() / 1000,
+        dt_end: end.getTime() / 1000
+      }).then(res => {
+        if (res.info.length === 0) return;
+        res.info.forEach(item => {
+          var month = new Date(item.dt_create * 1000).getMonth() + 1;
+          var day = new Date(item.dt_create * 1000).getDate();
+          var year = new Date(item.dt_create * 1000).getFullYear();
+          var hasContent = this.dataList.find(
+            x => x.month === month && x.day === day && x.year === year
+          );
+          if (hasContent) {
+            hasContent.value = item.value;
+            hasContent.temp = item.temp;
+            hasContent.type = item.type;
+            hasContent.detail = item.content;
+            hasContent.isShow = true;
+          }
+        });
+        console.log(this.dataList);
       });
     },
 

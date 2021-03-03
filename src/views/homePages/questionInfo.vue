@@ -64,7 +64,7 @@
             </el-button>
           </div>
         </div>
-        <div class="editor-box-style">
+        <div class="editor-box-style" style="overflow: auto">
           <editor-component
             v-model="userAnswer"
             class="editor-box"
@@ -130,7 +130,7 @@
           class="answer-info-box-scroll"
           v-infinite-scroll="loadSet"
           infinite-scroll-disabled="busy"
-          infinite-scroll-distance="10"
+          infinite-scroll-distance="20"
         >
           <div
             class="answer-item-info-style"
@@ -282,57 +282,37 @@ export default {
 
     getQuestionData(id) {
       var url = window.requestUrl + "question/queryByID";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: id
-        }),
-        success: res => {
-          console.log(res);
-          var content = res.info[0];
-          this.questionTitle = content.question_title;
-          if (content.question_info.length > 0) {
-            this.hasContent = true;
-            this.questionInfo = formatFunction.formatHtml(
-              content.question_info
-            );
-            this.questionContent = content.question_info;
-          }
-          this.questionUser = content.user_id;
-          this.questionAnonymous = content.anonymous;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        id: id
+      }).then(res => {
+        var content = res.info[0];
+        this.questionTitle = content.question_title;
+        if (content.question_info.length > 0) {
+          this.hasContent = true;
+          this.questionInfo = formatFunction.formatHtml(
+            content.question_info
+          );
+          this.questionContent = content.question_info;
         }
+        this.questionUser = content.user_id;
+        this.questionAnonymous = content.anonymous;
       });
     },
 
     getUserAnswerInfo(id) {
       var url = window.requestUrl + "answer/queryByID";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          question_id: id,
-          user_id: this.$store.state.loginData.userId
-        }),
-        success: res => {
-          console.log(res);
-          if (res.info.length > 0) {
-            this.isAnswered = true;
-            this.showButton = true;
-            this.userAnswerInfo = res.info[0];
-          } else {
-            this.isAnswered = false;
-            this.showButton = false;
-            this.userAnswerInfo = {};
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        question_id: id,
+        user_id: this.$store.state.loginData.userId
+      }).then(res => {
+        if (res.info.length > 0) {
+          this.isAnswered = true;
+          this.showButton = true;
+          this.userAnswerInfo = res.info[0];
+        } else {
+          this.isAnswered = false;
+          this.showButton = false;
+          this.userAnswerInfo = {};
         }
       });
     },
@@ -353,32 +333,22 @@ export default {
     getAnswerInfo(pageNum) {
       var start = pageNum * 5;
       var url = window.requestUrl + "answer/queryInfo";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          question_id: this.questionId,
-          start: start,
-          num: 5
-        }),
-        success: res => {
-          console.log(res);
-          this.totalNum = res.total;
-          res.info.forEach(item => {
-            item.day = this.getMonthDay(item.dt_create);
-          });
-          if (pageNum === 0) {
-            this.answerList = res.info;
-          } else {
-            this.answerList = this.answerList.concat(res.info);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        question_id: this.questionId,
+        start: start,
+        num: 5
+      }).then(res => {
+        this.totalNum = res.total;
+        res.info.forEach(item => {
+          item.day = this.getMonthDay(item.dt_create);
+        });
+        if (pageNum === 0) {
+          this.answerList = res.info;
+        } else {
+          this.answerList = this.answerList.concat(res.info);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 
@@ -392,21 +362,11 @@ export default {
 
     getFollowState(id) {
       var url = window.requestUrl + "follow/query";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          question_id: id
-        }),
-        success: res => {
-          console.log(res);
-          this.followState = res.info;
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        question_id: id
+      }).then(res => {
+        this.followState = res.info;
       });
     },
 
@@ -421,22 +381,12 @@ export default {
     },
 
     changeFollowReq(url) {
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          question_id: parseInt(this.questionId)
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.followState = !this.followState;
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        question_id: parseInt(this.questionId)
+      }).then(res => {
+        if (res.status) {
+          this.followState = !this.followState;
         }
       });
     },
@@ -446,32 +396,22 @@ export default {
       var url = this.isAnswered
         ? window.requestUrl + "answer/update"
         : window.requestUrl + "answer/addQuestion";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          question_id: this.questionId,
-          user_id: this.$store.state.loginData.userId,
-          content: this.userAnswer,
-          anonymous: this.isanonymous ? 1 : 0,
-          dt_create: new Date().getTime()
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message({
-              message: "回答成功",
-              type: "success"
-            });
-            this.showAnswer = false;
-            this.pageNum = 0;
-            this.loadSet();
-            this.getUserAnswerInfo(this.questionId);
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        question_id: this.questionId,
+        user_id: this.$store.state.loginData.userId,
+        content: this.userAnswer,
+        anonymous: this.isanonymous ? 1 : 0,
+        dt_create: new Date().getTime()
+      }).then(res => {
+        if (res.status) {
+          this.$message({
+            message: "回答成功",
+            type: "success"
+          });
+          this.showAnswer = false;
+          this.pageNum = 0;
+          this.loadSet();
+          this.getUserAnswerInfo(this.questionId);
         }
       });
     },

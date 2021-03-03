@@ -35,49 +35,40 @@ export default {
     getContentInfo(pageNum) {
       var start = pageNum * 10;
       var url = window.requestUrl + "question/query";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          start: start,
-          num: 10
-        }),
-        success: res => {
-          if (res.info.length === 0) {
-            this.showBottom = true;
-          }
-          res.info.forEach(item => {
-            var data = {
-              id: item.question_id,
-              title: item.question_title,
-              image: null,
-              isshow: false,
-              showContent: false,
-              authorName: "",
-              content: "",
-              htmlText: ""
-            };
-            if (item.answeInfo.length > 0) {
-              var contentParam = item.answeInfo[0];
-              data.isshow = true;
-              var dataFormat = formatFunction.formatText(
-                contentParam.answer_info
-              );
-              console.log(dataFormat);
-              data.image = dataFormat.img;
-              data.content = dataFormat.text;
-              data.authorName = contentParam.user_name;
-              data.htmlText = contentParam.answer_info;
-            }
-            this.contentInfo.push(data);
-          });
-          this.pageNum++;
-          this.busy = false;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        start: start,
+        num: 10
+      }).then(res => {
+        if (res.info.length === 0) {
+          this.showBottom = true;
         }
+        res.info.forEach(item => {
+          var data = {
+            id: item.question_id,
+            title: item.question_title,
+            image: null,
+            isshow: false,
+            showContent: false,
+            authorName: "",
+            content: "",
+            htmlText: ""
+          };
+          if (item.answeInfo.length > 0) {
+            var contentParam = item.answeInfo[0];
+            data.isshow = true;
+            var dataFormat = formatFunction.formatText(
+              contentParam.answer_info
+            );
+            console.log(dataFormat);
+            data.image = dataFormat.img;
+            data.content = dataFormat.text;
+            data.authorName = contentParam.user_name;
+            data.htmlText = contentParam.answer_info;
+          }
+          this.contentInfo.push(data);
+        });
+        this.pageNum++;
+        this.busy = false;
       });
     },
     loadSet() {

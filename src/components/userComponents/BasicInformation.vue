@@ -204,21 +204,11 @@ export default {
     },
     getInfo() {
       var url = window.requestUrl + "userInfo/queryById";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id
-        }),
-        success: res => {
-          console.log(res);
-          this.userInfo = res.info[0];
-          this.setState(res.info[0]);
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        user_id: this.user_id
+      }).then(res => {
+        this.userInfo = res.info[0];
+        this.setState(res.info[0]);
       });
     },
 
@@ -234,52 +224,32 @@ export default {
     },
     checkPassword() {
       var url = window.requestUrl + "userInfo/checkPassword";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          userPassword: this.passwordInfo.oldPassword
-        }),
-        success: res => {
-          console.log(res);
-          if (!res.status) {
-            this.$message({
-              message: res.msg,
-              type: "error"
-            });
-          } else {
-            this.updatePassword();
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        userPassword: this.passwordInfo.oldPassword
+      }).then(res => {
+        if (!res.status) {
+          this.$message({
+            message: res.msg,
+            type: "error"
+          });
+        } else {
+          this.updatePassword();
         }
       });
     },
     updatePassword() {
       var url = window.requestUrl + "userInfo/updatePassword";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          newPassword: this.passwordInfo.newPassword
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message({
-              message: res.msg,
-              type: "success"
-            });
-            this.visiblePassword = false;
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        newPassword: this.passwordInfo.newPassword
+      }).then(res => {
+        if (res.status) {
+          this.$message({
+            message: res.msg,
+            type: "success"
+          });
+          this.visiblePassword = false;
         }
       });
     },
@@ -300,27 +270,17 @@ export default {
     },
     updateName() {
       var url = window.requestUrl + "userInfo/updateName";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          user_name: this.dialogUserInfo.name
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message({
-              message: res.msg,
-              type: "success"
-            });
-            this.visibleName = false;
-            this.getInfo();
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        user_name: this.dialogUserInfo.name
+      }).then(res => {
+        if (res.status) {
+          this.$message({
+            message: res.msg,
+            type: "success"
+          });
+          this.visibleName = false;
+          this.getInfo();
         }
       });
     },
@@ -341,27 +301,17 @@ export default {
     },
     updateInfo() {
       var url = window.requestUrl + "userInfo/updateInfo";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          user_info: this.userDiscuss.info
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message({
-              message: res.msg,
-              type: "success"
-            });
-            this.visibleDiscuss = false;
-            this.getInfo();
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        user_info: this.userDiscuss.info
+      }).then(res => {
+        if (res.status) {
+          this.$message({
+            message: res.msg,
+            type: "success"
+          });
+          this.visibleDiscuss = false;
+          this.getInfo();
         }
       });
     }

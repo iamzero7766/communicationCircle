@@ -186,35 +186,25 @@ export default {
         return;
       }
       var url = window.requestUrl + "question/addQuestion";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          dt_create: new Date().getTime(),
-          title: this.questionTitle,
-          info: this.questionInfo,
-          anonymous: this.checked ? 1 : 0
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status === 1) {
-            this.$message({
-              message: "添加成功！",
-              type: "success"
-            });
-            this.visibleDialog = false;
-            this.$router.push({
-              path: "questionInfo",
-              query: {
-                id: res.info.insertId
-              }
-            });
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        dt_create: new Date().getTime(),
+        title: this.questionTitle,
+        info: this.questionInfo,
+        anonymous: this.checked ? 1 : 0
+      }).then(res => {
+        if (res.status === 1) {
+          this.$message({
+            message: "添加成功！",
+            type: "success"
+          });
+          this.visibleDialog = false;
+          this.$router.push({
+            path: "questionInfo",
+            query: {
+              id: res.info.insertId
+            }
+          });
         }
       });
     },
@@ -254,38 +244,22 @@ export default {
 
     searchQuestionAll() {
       var url = window.requestUrl + "question/queryAll";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        success: res => {
-          this.questionList = res.info;
-          this.questionList.map(item => {
-            item.value = item.question_title;
-            item.id = item.question_id;
-          });
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {}).then(res => {
+        this.questionList = res.info;
+        this.questionList.map(item => {
+          item.value = item.question_title;
+          item.id = item.question_id;
+        });
       });
     },
     searchArticleAll() {
       var url = window.requestUrl + "article/queryAll";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        success: res => {
-          this.articleList = res.info;
-          this.articleList.map(item => {
-            item.value = item.arcticle_title;
-            item.id = item.arcticle_id;
-          });
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {}).then(res => {
+        this.articleList = res.info;
+        this.articleList.map(item => {
+          item.value = item.arcticle_title;
+          item.id = item.arcticle_id;
+        });
       });
     }
   }

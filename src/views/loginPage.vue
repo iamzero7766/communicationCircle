@@ -22,8 +22,8 @@
     <div class="login-box">
       <div class="title-box">登  录</div>
       <el-form :model="loginInfo" label-width="80px" class="form-style" :rules="rules" ref="refForm" :hide-required-asterisk="true">
-        <el-form-item label="用户名" prop="userName">
-          <el-input v-model="loginInfo.user_phone" placeholder="请输入用户名"></el-input>
+        <el-form-item label="手机号" prop="user_phone">
+          <el-input v-model="loginInfo.user_phone" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="userPassword">
           <el-input v-model="loginInfo.userPassword" placeholder="请输入密码" type="password"></el-input>
@@ -48,7 +48,8 @@ export default {
       },
       rules: {
         user_phone: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          { pattern: /^1(\d){10}$/, message: "请输入正确手机号", trigger: "blur"}
         ],
         userPassword: [
           { required: true, message: "请输入密码", trigger: "blur" }
@@ -70,13 +71,8 @@ export default {
 
     loginSet() {
       var url = window.requestUrl + "userInfo/queryLogin";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify(this.loginInfo),
-        success: res => {
-          console.log(res);
+      this.$post(url, this.loginInfo )
+        .then(res => {
           if (res.status === 0) {
             this.$message({
               message: res.msg,
@@ -103,12 +99,10 @@ export default {
               path: "/homePage"
             });
           }
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
-
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     },
 
     registerSet() {

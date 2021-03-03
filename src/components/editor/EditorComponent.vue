@@ -110,22 +110,13 @@ export default {
         if (files[0]) {
           const formData = new window.FormData();
           formData.append("file", files[0], "cover.jpg");
-          self.$jq.ajax({
-            url: window.requestUrl + "image",
-            type: "post",
-            contentType: false,
-            data: formData,
-            processData: false,
-            success: res => {
-              console.log(res);
+          var url = window.requestUrl + "image";
+          self.$post(url, formData )
+            .then(res => {
               if (res.flag) {
                 insert(window.requestUrl + res.path);
               }
-            },
-            error: err => {
-              console.log(err);
-            }
-          });
+            })
         } else {
           console.log("hhhh");
         }

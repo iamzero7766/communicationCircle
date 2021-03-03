@@ -145,55 +145,29 @@ export default {
 
     addArticle() {
       var url = window.requestUrl + "article/addArticle";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          arcticle_title: this.formData.title,
-          user_id: this.$store.state.loginData.userId,
-          content: this.formData.content,
-          dt_create: new Date().getTime(),
-          type: this.tags.map(x => x.value).join(","),
-          tips: this.tips,
-          original: this.original
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status === 1) {
-            this.$message.success("发表成功！");
-            this.$router.push({
-              path: "homePage"
-            });
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        arcticle_title: this.formData.title,
+        user_id: this.$store.state.loginData.userId,
+        content: this.formData.content,
+        dt_create: new Date().getTime(),
+        type: this.tags.map(x => x.value).join(","),
+        tips: this.tips,
+        original: this.original
+      }).then(res => {
+        if (res.status === 1) {
+          this.$message.success("发表成功！");
+          this.$router.push({
+            path: "homePage"
+          });
         }
       });
     },
 
-    // formatData(list) {
-    //   var str = "";
-    //   for (var i = 0; i < list.length; i++) {
-    //     str += i === 0 ? list[i] : "," + list[i];
-    //   }
-    //   return str;
-    // },
 
     getTags() {
       var url = window.requestUrl + "tag/query";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        success: res => {
-          console.log(res);
-          this.tagList = res.info;
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {}).then(res => {
+        this.tagList = res.info;
       });
     },
     querySearch(queryString, cb) {
@@ -237,29 +211,19 @@ export default {
     addTag() {
       console.log(this.tagValue);
       var url = window.requestUrl + "tag/add";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          name: this.tagValue
-        }),
-        success: res => {
-          console.log(res);
-          if (this.tags.length === 6) {
-            this.$message.warning("最多添加6个标签");
-            return false;
-          }
-          var info = {
-            id: res.info.insertId,
-            value: this.tagValue
-          };
-          this.tags.push(info);
-          this.tagValue = "";
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        name: this.tagValue
+      }).then(res => {
+        if (this.tags.length === 6) {
+          this.$message.warning("最多添加6个标签");
+          return false;
         }
+        var info = {
+          id: res.info.insertId,
+          value: this.tagValue
+        };
+        this.tags.push(info);
+        this.tagValue = "";
       });
     }
   },

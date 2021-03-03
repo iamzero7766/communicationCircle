@@ -79,26 +79,16 @@ export default {
   methods: {
     getUserInfo() {
       var url = window.requestUrl + "userInfo/getUserMessage";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: this.id
-        }),
-        success: res => {
-          console.log(res);
-          this.userInfo.user_name = res.info[0].user_name;
-          this.userInfo.user_id = res.info[0].user_id;
-          this.userInfo.user_info = res.info[0].user_info;
-          this.userInfo.user_avator = res.info[0].user_avatar;
-          this.userInfo.answerTotal = res.answerTotal;
-          this.userInfo.articleTotal = res.articleTotal;
-          this.userInfo.questionTotal = res.questionTotal;
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        id: this.id
+      }).then(res => {
+        this.userInfo.user_name = res.info[0].user_name;
+        this.userInfo.user_id = res.info[0].user_id;
+        this.userInfo.user_info = res.info[0].user_info;
+        this.userInfo.user_avator = res.info[0].user_avatar;
+        this.userInfo.answerTotal = res.answerTotal;
+        this.userInfo.articleTotal = res.articleTotal;
+        this.userInfo.questionTotal = res.questionTotal;
       });
     },
 

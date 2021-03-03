@@ -53,32 +53,22 @@ export default {
     getFollowList(page) {
       var start = page * 10;
       var url = window.requestUrl + "follow/queryByUser";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          start: start,
-          end: 10
-        }),
-        success: res => {
-          console.log(res);
-          res.info.forEach(item => {
-            item.content = formatFunction.formatHtml(item.question_info);
-            item.showContent = true;
-          });
-          if (page === 0) {
-            this.followList = res.info;
-          } else {
-            this.followList = this.followList.concat(res.info);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        start: start,
+        end: 10
+      }).then(res => {
+        res.info.forEach(item => {
+          item.content = formatFunction.formatHtml(item.question_info);
+          item.showContent = true;
+        });
+        if (page === 0) {
+          this.followList = res.info;
+        } else {
+          this.followList = this.followList.concat(res.info);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 

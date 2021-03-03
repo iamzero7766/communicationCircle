@@ -4,7 +4,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+
+    <!--<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>-->
+    <!--<link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="preload" as="style">-->
+    <!--<link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet">-->
+    <!--<% } %>-->
+    <!--&lt;!&ndash; 使用CDN的JS文件 &ndash;&gt;-->
+    <!--<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>-->
+    <!--<link href="<%= htmlWebpackPlugin.options.cdn.js[i] %>" rel="preload" as="script">-->
+    <!--<% } %>-->
+    <link rel="icon" href="<%= BASE_URL %>logo.png">
     <title><%= htmlWebpackPlugin.options.title %></title>
       <script src="https://webapi.amap.com/maps?v=1.4.15&key=82cca0dd2ff1ab11607c23b215ecd644"></script>
       <script type="text/javascript" src="https://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
@@ -15,7 +24,9 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
-<!--    <script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>-->
+    <!--<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>-->
+    <!--<script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>-->
+    <!--<% } %>-->
   </body>
 </html>
 <style>

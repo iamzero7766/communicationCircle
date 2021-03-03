@@ -1,7 +1,7 @@
 <template>
   <div
     class="info-question-component"
-    v-infinite-scroll="loadSet" 
+    v-infinite-scroll="loadSet"
     infinite-scroll-disabled="busy"
     infinite-scroll-distance="10"
   >
@@ -55,37 +55,27 @@ export default {
         this.getQuestionList(this.pageNum);
       });
     },
-    
+
     getQuestionList(page) {
       var start = page * 10;
       var url = window.requestUrl + "question/queryByUser";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: this.user_id,
-          start: start,
-          end: 10
-        }),
-        success: res => {
-          console.log(res);
-          var info = res.info;
-          info.forEach(item => {
-            item.content = formatFunction.formatHtml(item.question_info);
-            item.showContent = true;
-          });
-          if (page === 0) {
-            this.questionList = info;
-          } else {
-            this.questionList = this.questionList.concat(info);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        id: this.user_id,
+        start: start,
+        end: 10
+      }).then(res => {
+        var info = res.info;
+        info.forEach(item => {
+          item.content = formatFunction.formatHtml(item.question_info);
+          item.showContent = true;
+        });
+        if (page === 0) {
+          this.questionList = info;
+        } else {
+          this.questionList = this.questionList.concat(info);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 

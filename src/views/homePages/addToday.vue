@@ -65,51 +65,31 @@ export default {
       });
     },
     refreshWeather() {
-      this.$jq.ajax({
-        url: "http://wthrcdn.etouch.cn/weather_mini",
-        type: "get",
-        data: {
-          city: "上海"
-        },
-        success: (res) => {
-          console.log(res);
+      var url = "http://wthrcdn.etouch.cn/weather_mini";
+      this.$fetch(url, { city: "上海" })
+        .then(res => {
           var result = res.data.forecast[0];
           this.weather = result.type;
           this.temp = result.low.substring(3) + "~" + result.high.substring(3);
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+        });
     },
 
 
     getInfoToday() {
 
       var url = window.requestUrl + "diary/queryToday";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: 'application/json',
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          dt_create: this.dt_create
-        }),
-        success: (res) => {
-          console.log(res);
-          if(res.info.length > 0) {
-            this.hasToday = true;
-            this.detail = res.info[0].content;
-            this.happyNumber = res.info[0].value;
-          } else {
-            this.hasToday = false;
-          }
-        },
-        error: (err) => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        dt_create: this.dt_create
+      }).then(res => {
+        if(res.info.length > 0) {
+          this.hasToday = true;
+          this.detail = res.info[0].content;
+          this.happyNumber = res.info[0].value;
+        } else {
+          this.hasToday = false;
         }
-      })
-
+      });
     },
 
     submit() {
@@ -129,20 +109,15 @@ export default {
         return;
       }
       var url = window.requestUrl + "diary/addDiary";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: 'application/json',
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          temp: this.temp,
-          dt_create: this.dt_create,
-          type: this.weather,
-          value: this.happyNumber,
-          content: this.detail,
-        }),
-        success: (res) => {
-          console.log(res);
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        temp: this.temp,
+        dt_create: this.dt_create,
+        type: this.weather,
+        value: this.happyNumber,
+        content: this.detail,
+      })
+        .then(res => {
           if(res.status == 1) {
             this.$message({
               message: "添加成功！",
@@ -152,11 +127,7 @@ export default {
               path: "/diary"
             });
           }
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      })
+        });
     },
 
     updateToday() {
@@ -168,32 +139,23 @@ export default {
         return;
       }
       var url = window.requestUrl + "diary/updateDiary";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.$store.state.loginData.userId,
-          value: this.happyNumber,
-          dt_create: this.dt_create,
-          content: this.detail
-        }),
-        success: res => {
-          console.log(res);
+      this.$post(url, {
+        user_id: this.$store.state.loginData.userId,
+        value: this.happyNumber,
+        dt_create: this.dt_create,
+        content: this.detail
+      })
+        .then(res => {
           if (res.status === 1) {
             this.$message({
-              message: "添加成功！",
+              message: "修改成功！",
               type: "success",
             });
             this.$router.push({
               path: "/diary"
             });
           }
-        },
-        error: err => {
-          console.log(err);
-        }
-      });
+        });
     }
 
 

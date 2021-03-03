@@ -118,26 +118,16 @@ export default {
   methods: {
     getInfo() {
       var url = window.requestUrl + "article/queryInfo";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: parseInt(this.articleId)
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.articleInfo = res.info[0];
-            this.articleInfo.tagList = this.articleInfo.type.split(",");
-            this.articleInfo.day = formatFunction.formatDate(
-              parseInt(this.articleInfo.dt_create)
-            );
-            this.article_user = res.info[0].user_id;
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        id: parseInt(this.articleId)
+      }).then(res => {
+        if (res.status) {
+          this.articleInfo = res.info[0];
+          this.articleInfo.tagList = this.articleInfo.type.split(",");
+          this.articleInfo.day = formatFunction.formatDate(
+            parseInt(this.articleInfo.dt_create)
+          );
+          this.article_user = res.info[0].user_id;
         }
       });
     },
@@ -160,72 +150,42 @@ export default {
     getComments(page) {
       var start = page * 10;
       var url = window.requestUrl + "comment/queryByArticle";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          article_id: parseInt(this.articleId),
-          dt_start: start,
-          dt_end: 10
-        }),
-        success: res => {
-          console.log(res);
-          if (page === 0) {
-            this.commentList = res.info;
-          } else {
-            this.commentList = this.commentList.concat(res.info);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        article_id: parseInt(this.articleId),
+        dt_start: start,
+        dt_end: 10
+      }).then(res => {
+        if (page === 0) {
+          this.commentList = res.info;
+        } else {
+          this.commentList = this.commentList.concat(res.info);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 
     getCommentsAll() {
       var url = window.requestUrl + "comment/queryByArticleAll";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          article_id: parseInt(this.articleId)
-        }),
-        success: res => {
-          console.log(res);
-          this.total = res.total;
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        article_id: parseInt(this.articleId)
+      }).then(res => {
+        this.total = res.total;
       });
     },
 
     submitComment() {
       var url = window.requestUrl + "comment/addComment";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          article_id: parseInt(this.articleId),
-          user_id: this.user_id,
-          content: this.commentInfo,
-          parent_id: 0,
-          dt_create: new Date().getTime()
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.commentInfo = "";
-            this.getComments(0);
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        article_id: parseInt(this.articleId),
+        user_id: this.user_id,
+        content: this.commentInfo,
+        parent_id: 0,
+        dt_create: new Date().getTime()
+      }).then(res => {
+        if (res.status) {
+          this.commentInfo = "";
+          this.getComments(0);
         }
       });
     }

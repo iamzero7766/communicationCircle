@@ -171,18 +171,13 @@ export default {
 
     reqRegister() {
       var url = window.requestUrl + "userInfo/add";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_name: this.userInfo.userName,
-          user_password: this.userInfo.userPassword,
-          user_info: this.userInfo.userInfo,
-          user_phone: this.userInfo.userPhone,
-        }),
-        success: res => {
-          console.log(res);
+      this.$post(url, {
+        user_name: this.userInfo.userName,
+        user_password: this.userInfo.userPassword,
+        user_info: this.userInfo.userInfo,
+        user_phone: this.userInfo.userPhone,
+      })
+        .then(res => {
           if (res.status) {
             this.$message.success(res.info);
             this.$router.push({
@@ -192,11 +187,7 @@ export default {
             this.$message.warning(res.info);
             this.$refs.registerForm.resetFields();
           }
-        },
-        error: (err) => {
-          console.log(err);
-        }
-      });
+        });
     }
   },
   created() {

@@ -98,20 +98,10 @@ export default {
     getInfo() {
       console.log(this.$route);
       var url = window.requestUrl + "userInfo/queryById";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id
-        }),
-        success: res => {
-          console.log(res);
-          this.userInfo = res.info[0];
-        },
-        error: err => {
-          console.log(err);
-        }
+      this.$post(url, {
+        user_id: this.user_id
+      }).then(res => {
+        this.userInfo = res.info[0];
       });
     },
 
@@ -130,48 +120,28 @@ export default {
 
     postBackImage(path) {
       var url = window.requestUrl + "userInfo/updateBack";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          back: path
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message.success("上传成功");
-            this.userInfo.user_back = path;
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        back: path
+      }).then(res => {
+        if (res.status) {
+          this.$message.success("上传成功");
+          this.userInfo.user_back = path;
         }
       });
     },
 
     postAvatar(path) {
       var url = window.requestUrl + "userInfo/updateAvatar";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          user_id: this.user_id,
-          avatar: path
-        }),
-        success: res => {
-          console.log(res);
-          if (res.status) {
-            this.$message.success("上传成功");
-            this.userInfo.user_avatar = path;
-            bus.$emit("avatar", path);
-            this.$store.commit("setAvatar", path);
-          }
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        user_id: this.user_id,
+        avatar: path
+      }).then(res => {
+        if (res.status) {
+          this.$message.success("上传成功");
+          this.userInfo.user_avatar = path;
+          bus.$emit("avatar", path);
+          this.$store.commit("setAvatar", path);
         }
       });
     }

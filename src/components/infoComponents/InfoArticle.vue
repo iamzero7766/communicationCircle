@@ -58,32 +58,22 @@ export default {
     getArticleInfo(page) {
       var start = page * 10;
       var url = window.requestUrl + "article/queryByUser";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: this.user_id,
-          start: start,
-          end: 10
-        }),
-        success: res => {
-          console.log(res);
-          res.info.forEach(item => {
-            item.tagList = item.type.split(",");
-            item.day = formatFunction.formatDate(parseInt(item.dt_create));
-          });
-          if (page === 0) {
-            this.articleList = res.info;
-          } else {
-            this.articleList = this.articleList.concat(res.info);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        id: this.user_id,
+        start: start,
+        end: 10
+      }).then(res => {
+        res.info.forEach(item => {
+          item.tagList = item.type.split(",");
+          item.day = formatFunction.formatDate(parseInt(item.dt_create));
+        });
+        if (page === 0) {
+          this.articleList = res.info;
+        } else {
+          this.articleList = this.articleList.concat(res.info);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 
@@ -137,5 +127,5 @@ export default {
     font-size: 12px;
     line-height: 20px;
   }
-}  
+}
 </style>

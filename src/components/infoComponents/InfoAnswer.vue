@@ -13,9 +13,9 @@
       </div>
       <div v-show="item.showContent && item.image" class="img-box">
         <el-image :src="item.image" class="image-style" fit="contain"></el-image>
-        <div class="image-article-style"> 我的回答：{{ item.content }}</div>
+        <div class="image-article-style"> 回答：{{ item.content }}</div>
       </div>
-      <div v-show="item.showContent && !item.image" class="content-box">我的回答：{{ item.content }}</div>
+      <div v-show="item.showContent && !item.image" class="content-box">回答：{{ item.content }}</div>
       <div v-show="!item.showContent" class="html-box" v-html="item.answer_info"></div>
       <div class="button-box">
         <el-button
@@ -67,37 +67,27 @@ export default {
     getAnswerInfo(page) {
       var start = page * 10;
       var url = window.requestUrl + "answer/queryByUser";
-      this.$jq.ajax({
-        url: url,
-        type: "post",
-        contentType: "application/json",
-        data: JSON.stringify({
-          id: this.user_id,
-          start: start,
-          end: 10
-        }),
-        success: res => {
-          console.log(res);
-          var resInfo = res.info;
-          resInfo.forEach(item => {
-            item.id = item.questionInfo.question_id;
-            item.question_title = item.questionInfo.question_title;
-            item.showContent = true;
-            var result = formatFunction.formatAnswer(item.answer_info);
-            item.image = result.img;
-            item.content = result.text;
-          });
-          if (page === 0) {
-            this.answerList = resInfo;
-          } else {
-            this.answerList = this.answerList.concat(resInfo);
-          }
-          this.pageNum++;
-          this.busy = res.info.length === 0;
-        },
-        error: err => {
-          console.log(err);
+      this.$post(url, {
+        id: this.user_id,
+        start: start,
+        end: 10
+      }).then(res => {
+        var resInfo = res.info;
+        resInfo.forEach(item => {
+          item.id = item.questionInfo.question_id;
+          item.question_title = item.questionInfo.question_title;
+          item.showContent = true;
+          var result = formatFunction.formatAnswer(item.answer_info);
+          item.image = result.img;
+          item.content = result.text;
+        });
+        if (page === 0) {
+          this.answerList = resInfo;
+        } else {
+          this.answerList = this.answerList.concat(resInfo);
         }
+        this.pageNum++;
+        this.busy = res.info.length === 0;
       });
     },
 
