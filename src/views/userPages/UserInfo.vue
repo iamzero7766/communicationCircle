@@ -22,11 +22,12 @@
 </template>
 
 <script>
-import BasicInformation from "../../components/userComponents/BasicInformation";
-import NoneComponent from "../../components/userComponents/NoneComponent";
 export default {
   name: "UserInfo",
-  components: {NoneComponent, BasicInformation},
+  components: {
+    NoneComponent: () => import("../../components/userComponents/NoneComponent"),
+    BasicInformation: () => import("../../components/userComponents/BasicInformation")
+  },
   data() {
     return {
       activeNum: 1

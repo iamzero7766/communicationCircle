@@ -13,10 +13,11 @@
 
 <script>
 import formatFunction from "@/utils/formatHtml";
-import QuestionInfoPart from "../questionComponents/QuestionInfoPart";
 export default {
   name: "FollowContent",
-  components: {QuestionInfoPart},
+  components: {
+    QuestionInfoPart: () => import("../questionComponents/QuestionInfoPart")
+  },
   data() {
     return {
       followInfo: [],

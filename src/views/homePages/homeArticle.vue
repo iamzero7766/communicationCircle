@@ -17,11 +17,12 @@
 </template>
 
 <script>
-import ArticleInfo from "../../components/articleComponents/ArticleInfo";
-import TagComponent from "../../components/articleComponents/TagComponent";
 export default {
   name: "homeArticle",
-  components: {TagComponent, ArticleInfo},
+  components: {
+    TagComponent: () => import("../../components/articleComponents/TagComponent"),
+    ArticleInfo: () => import("../../components/articleComponents/ArticleInfo")
+  },
   data() {
     return {
       activeIndex: "1"

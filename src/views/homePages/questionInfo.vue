@@ -200,20 +200,15 @@
 </template>
 
 <script>
-import EditorComponent from "../../components/editor/EditorComponent";
 import formatFunction from "@/utils/formatHtml";
-import UserInfoComponent from "../../components/userComponents/UserInfoComponent";
-import PicComponent from "../../components/userComponents/picComponent";
-import AnonymosUser from "../../components/userComponents/AnonymosUser";
-import AttentionInfo from "../../components/AttentionInfo";
 export default {
   name: "questionInfo",
   components: {
-    AttentionInfo,
-    AnonymosUser,
-    PicComponent,
-    UserInfoComponent,
-    EditorComponent
+    AttentionInfo: () => import("../../components/AttentionInfo"),
+    AnonymosUser: () => import("../../components/userComponents/AnonymosUser"),
+    PicComponent: () => import("../../components/userComponents/picComponent"),
+    UserInfoComponent: () => import("../../components/userComponents/UserInfoComponent"),
+    EditorComponent: () => import("../../components/editor/EditorComponent")
   },
   data() {
     return {

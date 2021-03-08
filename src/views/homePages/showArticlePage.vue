@@ -94,13 +94,14 @@
 
 <script>
 import formatFunction from "@/utils/formatHtml";
-import CommentEditor from "../../components/editor/CommentEditor";
-import UserInfoComponent from "../../components/userComponents/UserInfoComponent";
-import PicComponent from "../../components/userComponents/picComponent";
-import AttentionInfo from "../../components/AttentionInfo";
 export default {
   name: "showArticlePage",
-  components: {CommentEditor, AttentionInfo, PicComponent, UserInfoComponent },
+  components: {
+    CommentEditor: () => import("../../components/editor/CommentEditor"),
+    AttentionInfo: () => import("../../components/AttentionInfo"),
+    PicComponent: () => import("../../components/userComponents/picComponent"),
+    UserInfoComponent: () => import("../../components/userComponents/UserInfoComponent")
+  },
   data() {
     return {
       articleId: this.$route.query.id,

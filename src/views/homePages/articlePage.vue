@@ -98,10 +98,11 @@
 </template>
 
 <script>
-import EditorComponent from "../../components/editor/EditorComponent";
 export default {
   name: "articlePage",
-  components: { EditorComponent },
+  components: {
+    EditorComponent: () => import("../../components/editor/EditorComponent")
+  },
   data() {
     return {
       menuList: [],

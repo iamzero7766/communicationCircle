@@ -63,14 +63,15 @@
 </template>
 
 <script>
-import InfoQuestion from "../../components/infoComponents/InfoQuestion";
-import InfoAnswer from "../../components/infoComponents/InfoAnswer";
-import FollowQuestion from "../../components/infoComponents/FollowQuestion";
-import InfoArticle from "../../components/infoComponents/InfoArticle";
 import bus from "../../utils/bus";
 export default {
   name: "MyHomepage",
-  components: { InfoArticle, FollowQuestion, InfoAnswer, InfoQuestion },
+  components: {
+    InfoArticle: () => import("../../components/infoComponents/InfoArticle"),
+    FollowQuestion: () => import("../../components/infoComponents/FollowQuestion"),
+    InfoAnswer: () => import("../../components/infoComponents/InfoAnswer"),
+    InfoQuestion: () => import("../../components/infoComponents/InfoQuestion")
+  },
   data() {
     return {
       myID: this.$store.state.loginData.userId,

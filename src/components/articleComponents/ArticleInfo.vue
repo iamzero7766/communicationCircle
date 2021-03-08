@@ -12,10 +12,11 @@
 
 <script>
 import formatFunction from "@/utils/formatHtml";
-import ArticlePart from "./ArticlePart";
 export default {
   name: "ArticleInfo",
-  components: { ArticlePart },
+  components: {
+    ArticlePart: () => import("./ArticlePart")
+  },
   data() {
     return {
       articleList: [],

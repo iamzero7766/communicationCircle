@@ -8,12 +8,11 @@
 </template>
 
 <script>
-import AppHeader from "./components/AppHeader";
 import bus from "./utils/bus.js";
 // import store from "./store/index.js";
 export default {
   components: {
-    AppHeader
+    AppHeader: () => import("./components/AppHeader")
   },
 
   data() {

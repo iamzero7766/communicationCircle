@@ -69,11 +69,12 @@
 </template>
 
 <script>
-import EditorComponent from "../components/editor/EditorComponent";
 import bus from "../utils/bus.js";
 export default {
   name: "AppHeader",
-  components: { EditorComponent },
+  components: {
+    EditorComponent: () => import("../components/editor/EditorComponent")
+  },
   data() {
     return {
       appName: "CENTER",

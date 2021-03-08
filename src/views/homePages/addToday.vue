@@ -23,11 +23,11 @@
 
 <script>
 import Editor from "wangeditor";
-import EditorComponent from "../../components/editor/EditorComponent";
-// import AMap from "vue-amap";
 export default {
   name: "addToday",
-  components: { EditorComponent },
+  components: {
+    EditorComponent: () => import("../../components/editor/EditorComponent")
+  },
   data() {
     return {
       nowDate: "",

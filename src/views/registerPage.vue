@@ -60,10 +60,11 @@
 </template>
 
 <script>
-import VerifySet from "../components/VerifySet";
 export default {
   name: "registerPage",
-  components:{ VerifySet },
+  components:{
+    VerifySet: () => import("../components/VerifySet")
+  },
   data() {
     var validateCode = (rule, value, callback) => {
       if (value === this.userCode) {

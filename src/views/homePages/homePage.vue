@@ -25,12 +25,13 @@
 </template>
 
 <script>
-import PersonalComponent from "../../components/homeComponents/PersonalComponent.vue";
-import RecommandContent from "../../components/homeComponents/RecommandContent.vue";
-import FollowContent from "../../components/homeComponents/FollowContent";
-import AttentionInfo from "../../components/AttentionInfo";
 export default {
-  components: {AttentionInfo, FollowContent, RecommandContent, PersonalComponent },
+  components: {
+    AttentionInfo: () => import("../../components/AttentionInfo"),
+    FollowContent: () => import("../../components/homeComponents/FollowContent"),
+    RecommandContent: () => import("../../components/homeComponents/RecommandContent.vue"),
+    PersonalComponent: () => import("../../components/homeComponents/PersonalComponent.vue")
+  },
   name: "homePage",
   data() {
     return {
